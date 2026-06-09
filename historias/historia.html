@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUMIKIDS - Mis Historias</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="historia.css">
+<link rel="stylesheet" href="../libro/libro.css">
+</head>
+
+<body>
+
+    <!-- Barra de Navegación -->
+    <header class="encabezado-navegacion">
+        <div class="contenedor-navegacion">
+            <!-- Logo Lumikids -->
+            <a href="../paginaPrincipal/PaginaP.html" class="logotipo-contenedor">
+                <span class="marca-lumikids">LUMI<span class="marca-kids">KIDS</span></span>
+                <span class="lema-lumikids">Lee, juega y reconstruye mundos mágicos</span>
+            </a>
+
+            <!-- Enlaces del Menú -->
+            <nav class="menu-navegacion">
+                <a href="../paginaPrincipal/PaginaP.html" class="enlace-navegacion" id="enlace-inicio">
+                    <svg class="icono-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                        <polyline points="9 22 9 12 15 12 15 22" />
+                    </svg>
+                    Inicio
+                </a>
+                <a href="historia.html" class="enlace-navegacion activo" id="enlace-historias">
+                    <svg class="icono-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
+                        <path d="M6 6h10M6 10h10" />
+                    </svg>
+                    Historias
+                </a>
+                <a href="../mundos/mundo.html" class="enlace-navegacion" id="enlace-mundos">
+                    <svg class="icono-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+                        <path d="M2 12h20" />
+                    </svg>
+                    Mundos
+                </a>
+                <a href="../paginaPrincipal/PaginaP.html#seccion-logros" class="enlace-navegacion" id="enlace-logros">
+                    <svg class="icono-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                        <path d="M4 22h16" />
+                        <path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34" />
+                        <path d="M12 2a15.3 15.3 0 0 1 4 7H8a15.3 15.3 0 0 1 4-7z" />
+                    </svg>
+                    Logros
+                </a>
+                <a href="../paginaPrincipal/PaginaP.html#seccion-padres" class="enlace-navegacion" id="enlace-padres">
+                    <svg class="icono-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                    Padres
+                </a>
+                <a href="../paginaPrincipal/PaginaP.html#seccion-contacto" class="enlace-navegacion" id="enlace-contacto">
+                    <svg class="icono-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect width="20" height="16" x="2" y="4" rx="2" />
+                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                    </svg>
+                    Contacto
+                </a>
+            </nav>
+
+            <!-- Botones de Acción -->
+            <div class="botones-encabezado">
+                <button class="boton-iniciar-sesion" id="boton-iniciar-sesion" onclick="window.location.href='../paginaPrincipal/PaginaP.html?auth=iniciar';">
+                    <svg class="icono-boton" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                        <polyline points="10 17 15 12 10 7" />
+                        <line x1="15" x2="3" y1="12" y2="12" />
+                    </svg>
+                    Iniciar sesión
+                </button>
+                <button class="boton-registrarse" id="boton-registrarse" onclick="window.location.href='../paginaPrincipal/PaginaP.html?auth=registro';">
+                    <svg class="icono-boton" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <line x1="19" x2="19" y1="8" y2="14" />
+                        <line x1="16" x2="22" y1="11" y2="11" />
+                    </svg>
+                    Registrarse
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido Principal (Mis Historias) -->
+    <main class="cuerpo-principal" id="contenido-principal">
+        <div class="contenedor-historias">
+            <!-- Fila Superior: Encabezado, Buscador y Zorro Mascot -->
+            <div class="cabecera-historias">
+                <div class="cabecera-texto-bloque">
+                    <div class="libro-icono-contenedor">
+                        <i class="bi bi-book-half"></i>
+                    </div>
+                    <div class="info-titulo-historias">
+                        <h1 class="titulo-pagina-historias">Mis Historias</h1>
+                        <p class="descripcion-pagina-historias">Descubre increíbles aventuras, responde preguntas,
+                            supera desafíos y gana piezas mágicas.</p>
+                    </div>
+                </div>
+
+                <div class="cabecera-derecha-interactiva">
+                    <div class="contenedor-buscador">
+                        <i class="bi bi-search icono-buscar"></i>
+                        <input type="text" id="buscador-historias" placeholder="Buscar historias...">
+                    </div>
+
+                    <div class="mascota-historias-wrapper">
+                        <img src="imagenes/zorrito_saludando.png" alt="Zorrito Saludando" class="zorrito-saludando">
+                        <div class="burbuja-mascota">
+                            <span class="estrella-burbuja">⭐</span>
+                            <div class="texto-burbuja">
+                                <strong>¡Sigue leyendo!</strong>
+                                <span>Cada historia te acerca a reconstruir nuevos mundos.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Barra de Filtros -->
+            <div class="barra-filtros">
+                <button class="filtro-btn activo" data-dificultad="todas">Todas</button>
+                <button class="filtro-btn" data-dificultad="facil"><span class="punto verde"></span>Fáciles</button>
+                <button class="filtro-btn" data-dificultad="intermedia"><span
+                        class="punto naranja"></span>Intermedias</button>
+                <button class="filtro-btn" data-dificultad="avanzada"><span class="punto rojo"></span>Avanzadas</button>
+            </div>
+
+            <!-- Grid de Contenido Principal (Historias + Progreso Lateral) -->
+            <div class="seccion-principal-historias">
+                <!-- Contenedor General de la Biblioteca por Categorías -->
+                <div class="contenedor-biblioteca" id="contenedor-biblioteca">
+                    <!-- Las categorías de mundos y sus libros correspondientes se generarán dinámicamente -->
+                </div>
+
+                <!-- Barra Lateral de Progreso -->
+                <aside class="progreso-lateral">
+                    <div class="tarjeta-progreso-total">
+                        <div class="progreso-total-cabecera">
+                            <i class="bi bi-star-fill icono-estrella-progreso"></i>
+                            <span>Tu progreso</span>
+                        </div>
+                        <div class="progreso-total-cuerpo">
+                            <div class="rompecabezas-grande-icono">
+                                <i class="bi bi-puzzle-fill"></i>
+                            </div>
+                            <div class="progreso-total-info">
+                                <span class="valor-piezas-totales" id="total-piezas-progreso">32/100</span>
+                                <span class="etiqueta-piezas-totales">piezas totales</span>
+                            </div>
+                            <div class="barra-progreso-total-wrapper">
+                                <div class="barra-progreso-total-llena" style="width: 32%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <!-- Pie de Página (Footer) -->
+    <footer class="pie-pagina">
+        <div class="contenedor-pie">
+            <!-- Columna Logo -->
+            <div class="columna-pie columna-logo-redes">
+                <a href="../paginaPrincipal/PaginaP.html" class="logotipo-contenedor blanco">
+                    <span class="marca-lumikids">LUMI<span class="marca-kids">KIDS</span></span>
+                    <span class="lema-lumikids">Lee, juega y reconstruye mundos mágicos</span>
+                </a>
+            </div>
+
+            <!-- Columna Enlaces 2 -->
+            <div class="columna-pie">
+                <h4 class="titulo-columna-pie">Ayuda</h4>
+                <ul class="enlaces-pie">
+                    <li><a href="#">Preguntas frecuentes</a></li>
+                    <li><a href="#">Centro de ayuda</a></li>
+                    <li><a href="#">Soporte</a></li>
+                </ul>
+            </div>
+
+            <!-- Columna Enlaces 3 -->
+            <div class="columna-pie">
+                <h4 class="titulo-columna-pie">Recursos</h4>
+                <ul class="enlaces-pie">
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Guías para padres</a></li>
+                    <li><a href="#">Actividades</a></li>
+                </ul>
+            </div>
+
+            <!-- Columna Enlaces 4 -->
+            <div class="columna-pie">
+                <h4 class="titulo-columna-pie">Legal</h4>
+                <ul class="enlaces-pie">
+                    <li><a href="#">Términos y condiciones</a></li>
+                    <li><a href="#">Política de privacidad</a></li>
+                </ul>
+            </div>
+
+            <!-- Columna Contacto -->
+            <div class="columna-pie columna-contacto">
+                <h4 class="titulo-columna-pie">Contacto</h4>
+                <ul class="enlaces-pie info-contacto">
+                    <li>
+                        <svg class="icono-contacto-pie" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect width="20" height="16" x="2" y="4" rx="2" />
+                            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                        </svg>
+                        <span>lumikids@gmail.com</span>
+                    </li>
+                    <li>
+                        <svg class="icono-contacto-pie" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path
+                                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                        </svg>
+                        <span>+57 319 369 5398</span>
+                    </li>
+                    <li>
+                        <svg class="icono-contacto-pie" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                            <circle cx="12" cy="10" r="3" />
+                        </svg>
+                        <span>Medellín, Colombia</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Ilustración del Búho Footer -->
+            <div class="pie-buho-contenedor">
+                <img src="../paginaPrincipal/imagenes/image-removebg-preview.png" alt="Búho Lector" class="buho-footer">
+            </div>
+        </div>
+    </footer>
+
+
+
+<!-- Overlay del Libro Mágico -->
+<div id="overlay-libro" class="overlay-libro oculto">
+    <!-- Fondo mágico -->
+    <div class="libro-fondo-magico" id="libro-fondo-magico"></div>
+
+    <!-- Spinner de carga mágica -->
+    <div id="libro-cargando" class="libro-cargando oculto">
+        <div class="cargando-contenido">
+            <div class="cargando-libro-anim">📚</div>
+            <h3>Invocando historia con magia...</h3>
+            <p>Lumi y Pixel están preparando las páginas</p>
+        </div>
+    </div>
+    <!-- Partículas mágicas -->
+    <div class="particulas-magicas">
+        <span class="particula"></span><span class="particula"></span><span class="particula"></span>
+        <span class="particula"></span><span class="particula"></span><span class="particula"></span>
+        <span class="particula"></span><span class="particula"></span><span class="particula"></span>
+        <span class="particula"></span><span class="particula"></span><span class="particula"></span>
+    </div>
+
+    <!-- Barra Superior de Herramientas -->
+    <div class="libro-barra-superior">
+        <button class="libro-btn-herramienta" id="btn-volver-aventuras">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span>Volver a Aventuras</span>
+        </button>
+        <button class="libro-btn-herramienta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.08"/></svg>
+            <span>Escuchar historia</span>
+        </button>
+        <button class="libro-btn-herramienta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+            <span>Aumentar texto</span>
+        </button>
+        <button class="libro-btn-herramienta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            <span>Favoritos</span>
+        </button>
+    </div>
+
+    <!-- Contenedor del Libro y Botones Flotantes -->
+    <div class="libro-contenedor-flip">
+
+        <!-- Botón Flotante Izquierdo -->
+        <button class="libro-btn-flotante btn-flotante-izq" id="btn-flotante-anterior" aria-label="Página anterior">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+
+        <!-- El Libro (Flipbook de St.PageFlip) -->
+        <div class="libro-flipbook" id="libro-flipbook">
+
+            <!-- PÁGINA 0: Portada (Tapa dura) -->
+            <div class="pagina-libro-flip cover-front" data-density="hard">
+                <div class="cover-decoracion-borde">
+                    <span class="cover-estrella-dec dec-tl">✦</span>
+                    <span class="cover-estrella-dec dec-tr">✦</span>
+                    <span class="cover-estrella-dec dec-bl">✦</span>
+                    <span class="cover-estrella-dec dec-br">✦</span>
+                    <div class="cover-titulo-contenedor">
+                        <span class="cover-badge-mundo" id="cover-badge-mundo">Mundo</span>
+                        <h1 class="cover-titulo" id="cover-titulo">Cargando...</h1>
+                        <div class="cover-divisor"></div>
+                    </div>
+                    <div class="cover-ilustracion" id="cover-ilustracion">
+                        <img src="" alt="Ilustracion Portada">
+                    </div>
+                    <button class="cover-btn-abrir" id="cover-btn-abrir">
+                        <span>Abrir Libro Magico</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- PÁGINA 1: Stats (Tapa blanda) -->
+            <div class="pagina-libro-flip pagina-intro" data-density="soft">
+                <div class="pagina-contenido">
+                    <div class="pagina-header">
+                        <span class="pagina-estrella">&#11088;</span>
+                        <div class="pagina-mundo-badge badge-mundo-val">Mundo</div>
+                    </div>
+                    <h2 class="pagina-titulo-historia titulo-historia-val">Cargando...</h2>
+                    <div class="pagina-ilustracion-principal">
+                        <img class="ilustracion-principal-val" src="" alt="Ilustracion Principal">
+                    </div>
+                    <div class="pagina-info-historia">
+                        <ul class="info-lista">
+                            <li><span class="info-icono">&#127758;</span> Mundo: <strong class="info-mundo-val">---</strong></li>
+                            <li><span class="info-icono">&#11088;</span> Dificultad: <strong class="info-dificultad-val">---</strong></li>
+                            <li><span class="info-icono">&#128214;</span> Capitulos: <strong class="info-capitulos-val">4</strong></li>
+                            <li><span class="info-icono">&#129513;</span> Piezas: <strong class="info-piezas-total-val">4</strong></li>
+                        </ul>
+                    </div>
+                    <div class="pagina-footer-stats">
+                        <div class="pagina-rompecabezas">
+                            <span class="rompecabezas-label">Rompecabezas</span>
+                            <div class="rompecabezas-preview">&#129513;</div>
+                        </div>
+                        <div class="pagina-progreso">
+                            <span class="progreso-label">Piezas obtenidas:</span>
+                            <span class="progreso-numero progreso-numero-val">0/4</span>
+                            <div class="progreso-barra">
+                                <div class="progreso-barra-relleno progreso-barra-val"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PÁGINA 2: Capitulo 1 -->
+            <div class="pagina-libro-flip" data-density="soft">
+                <div class="pagina-contenido">
+                    <div class="capitulo-header">
+                        <span class="capitulo-badge">Capitulo 1 de 4</span>
+                    </div>
+                    <h3 class="capitulo-titulo" id="cap-titulo-1">Titulo del Capitulo</h3>
+                    <div class="capitulo-ilustracion" id="cap-ilustracion-1">
+                        <img src="" alt="Ilustracion Capitulo 1">
+                    </div>
+                    <div class="capitulo-texto" id="cap-texto-1"></div>
+                    <div class="capitulo-dialogo">
+                        <div class="dialogo-avatar"><img src="imagenes/zorrito_saludando.png" alt="Lumi"></div>
+                        <div class="dialogo-burbuja">
+                            <strong class="dialogo-nombre" id="dialogo-nombre-1">Lumi</strong>
+                            <p id="dialogo-texto-1">Dialogo de Lumi...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PÁGINA 3: Stats (reverso Cap 1) -->
+            <div class="pagina-libro-flip pagina-intro" data-density="soft">
+                <div class="pagina-contenido">
+                    <div class="pagina-header">
+                        <span class="pagina-estrella">&#11088;</span>
+                        <div class="pagina-mundo-badge badge-mundo-val">Mundo</div>
+                    </div>
+                    <h2 class="pagina-titulo-historia titulo-historia-val">Cargando...</h2>
+                    <div class="pagina-ilustracion-principal">
+                        <img class="ilustracion-principal-val" src="" alt="Ilustracion Principal">
+                    </div>
+                    <div class="pagina-info-historia">
+                        <ul class="info-lista">
+                            <li><span class="info-icono">&#127758;</span> Mundo: <strong class="info-mundo-val">---</strong></li>
+                            <li><span class="info-icono">&#11088;</span> Dificultad: <strong class="info-dificultad-val">---</strong></li>
+                            <li><span class="info-icono">&#128214;</span> Capitulos: <strong class="info-capitulos-val">4</strong></li>
+                            <li><span class="info-icono">&#129513;</span> Piezas: <strong class="info-piezas-total-val">4</strong></li>
+                        </ul>
+                    </div>
+                    <div class="pagina-footer-stats">
+                        <div class="pagina-rompecabezas">
+                            <span class="rompecabezas-label">Rompecabezas</span>
+                            <div class="rompecabezas-preview">&#129513;</div>
+                        </div>
+                        <div class="pagina-progreso">
+                            <span class="progreso-label">Piezas obtenidas:</span>
+                            <span class="progreso-numero progreso-numero-val">0/4</span>
+                            <div class="progreso-barra">
+                                <div class="progreso-barra-relleno progreso-barra-val"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PÁGINA 4: Capitulo 2 -->
+            <div class="pagina-libro-flip" data-density="soft">
+                <div class="pagina-contenido">
+                    <div class="capitulo-header">
+                        <span class="capitulo-badge">Capitulo 2 de 4</span>
+                    </div>
+                    <h3 class="capitulo-titulo" id="cap-titulo-2">Titulo del Capitulo</h3>
+                    <div class="capitulo-ilustracion" id="cap-ilustracion-2">
+                        <img src="" alt="Ilustracion Capitulo 2">
+                    </div>
+                    <div class="capitulo-texto" id="cap-texto-2"></div>
+                    <div class="capitulo-dialogo">
+                        <div class="dialogo-avatar"><img src="imagenes/zorrito_saludando.png" alt="Lumi"></div>
+                        <div class="dialogo-burbuja">
+                            <strong class="dialogo-nombre" id="dialogo-nombre-2">Lumi</strong>
+                            <p id="dialogo-texto-2">Dialogo de Lumi...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PÁGINA 5: Stats (reverso Cap 2) -->
+            <div class="pagina-libro-flip pagina-intro" data-density="soft">
+                <div class="pagina-contenido">
+                    <div class="pagina-header">
+                        <span class="pagina-estrella">&#11088;</span>
+                        <div class="pagina-mundo-badge badge-mundo-val">Mundo</div>
+                    </div>
+                    <h2 class="pagina-titulo-historia titulo-historia-val">Cargando...</h2>
+                    <div class="pagina-ilustracion-principal">
+                        <img class="ilustracion-principal-val" src="" alt="Ilustracion Principal">
+                    </div>
+                    <div class="pagina-info-historia">
+                        <ul class="info-lista">
+                            <li><span class="info-icono">&#127758;</span> Mundo: <strong class="info-mundo-val">---</strong></li>
+                            <li><span class="info-icono">&#11088;</span> Dificultad: <strong class="info-dificultad-val">---</strong></li>
+                            <li><span class="info-icono">&#128214;</span> Capitulos: <strong class="info-capitulos-val">4</strong></li>
+                            <li><span class="info-icono">&#129513;</span> Piezas: <strong class="info-piezas-total-val">4</strong></li>
+                        </ul>
+                    </div>
+                    <div class="pagina-footer-stats">
+                        <div class="pagina-rompecabezas">
+                            <span class="rompecabezas-label">Rompecabezas</span>
+                            <div class="rompecabezas-preview">&#129513;</div>
+                        </div>
+                        <div class="pagina-progreso">
+                            <span class="progreso-label">Piezas obtenidas:</span>
+                            <span class="progreso-numero progreso-numero-val">0/4</span>
+                            <div class="progreso-barra">
+                                <div class="progreso-barra-relleno progreso-barra-val"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PÁGINA 6: Capitulo 3 -->
+            <div class="pagina-libro-flip" data-density="soft">
+                <div class="pagina-contenido">
+                    <div class="capitulo-header">
+                        <span class="capitulo-badge">Capitulo 3 de 4</span>
+                    </div>
+                    <h3 class="capitulo-titulo" id="cap-titulo-3">Titulo del Capitulo</h3>
+                    <div class="capitulo-ilustracion" id="cap-ilustracion-3">
+                        <img src="" alt="Ilustracion Capitulo 3">
+                    </div>
+                    <div class="capitulo-texto" id="cap-texto-3"></div>
+                    <div class="capitulo-dialogo">
+                        <div class="dialogo-avatar"><img src="imagenes/zorrito_saludando.png" alt="Lumi"></div>
+                        <div class="dialogo-burbuja">
+                            <strong class="dialogo-nombre" id="dialogo-nombre-3">Lumi</strong>
+                            <p id="dialogo-texto-3">Dialogo de Lumi...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PÁGINA 7: Stats (reverso Cap 3) -->
+            <div class="pagina-libro-flip pagina-intro" data-density="soft">
+                <div class="pagina-contenido">
+                    <div class="pagina-header">
+                        <span class="pagina-estrella">&#11088;</span>
+                        <div class="pagina-mundo-badge badge-mundo-val">Mundo</div>
+                    </div>
+                    <h2 class="pagina-titulo-historia titulo-historia-val">Cargando...</h2>
+                    <div class="pagina-ilustracion-principal">
+                        <img class="ilustracion-principal-val" src="" alt="Ilustracion Principal">
+                    </div>
+                    <div class="pagina-info-historia">
+                        <ul class="info-lista">
+                            <li><span class="info-icono">&#127758;</span> Mundo: <strong class="info-mundo-val">---</strong></li>
+                            <li><span class="info-icono">&#11088;</span> Dificultad: <strong class="info-dificultad-val">---</strong></li>
+                            <li><span class="info-icono">&#128214;</span> Capitulos: <strong class="info-capitulos-val">4</strong></li>
+                            <li><span class="info-icono">&#129513;</span> Piezas: <strong class="info-piezas-total-val">4</strong></li>
+                        </ul>
+                    </div>
+                    <div class="pagina-footer-stats">
+                        <div class="pagina-rompecabezas">
+                            <span class="rompecabezas-label">Rompecabezas</span>
+                            <div class="rompecabezas-preview">&#129513;</div>
+                        </div>
+                        <div class="pagina-progreso">
+                            <span class="progreso-label">Piezas obtenidas:</span>
+                            <span class="progreso-numero progreso-numero-val">0/4</span>
+                            <div class="progreso-barra">
+                                <div class="progreso-barra-relleno progreso-barra-val"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PÁGINA 8: Capitulo 4 -->
+            <div class="pagina-libro-flip" data-density="soft">
+                <div class="pagina-contenido">
+                    <div class="capitulo-header">
+                        <span class="capitulo-badge">Capitulo 4 de 4</span>
+                    </div>
+                    <h3 class="capitulo-titulo" id="cap-titulo-4">Titulo del Capitulo</h3>
+                    <div class="capitulo-ilustracion" id="cap-ilustracion-4">
+                        <img src="" alt="Ilustracion Capitulo 4">
+                    </div>
+                    <div class="capitulo-texto" id="cap-texto-4"></div>
+                    <div class="capitulo-dialogo">
+                        <div class="dialogo-avatar"><img src="imagenes/zorrito_saludando.png" alt="Lumi"></div>
+                        <div class="dialogo-burbuja">
+                            <strong class="dialogo-nombre" id="dialogo-nombre-4">Lumi</strong>
+                            <p id="dialogo-texto-4">Dialogo de Lumi...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PÁGINA 9: Stats (reverso Cap 4) -->
+            <div class="pagina-libro-flip pagina-intro" data-density="soft">
+                <div class="pagina-contenido">
+                    <div class="pagina-header">
+                        <span class="pagina-estrella">&#11088;</span>
+                        <div class="pagina-mundo-badge badge-mundo-val">Mundo</div>
+                    </div>
+                    <h2 class="pagina-titulo-historia titulo-historia-val">Cargando...</h2>
+                    <div class="pagina-ilustracion-principal">
+                        <img class="ilustracion-principal-val" src="" alt="Ilustracion Principal">
+                    </div>
+                    <div class="pagina-info-historia">
+                        <ul class="info-lista">
+                            <li><span class="info-icono">&#127758;</span> Mundo: <strong class="info-mundo-val">---</strong></li>
+                            <li><span class="info-icono">&#11088;</span> Dificultad: <strong class="info-dificultad-val">---</strong></li>
+                            <li><span class="info-icono">&#128214;</span> Capitulos: <strong class="info-capitulos-val">4</strong></li>
+                            <li><span class="info-icono">&#129513;</span> Piezas: <strong class="info-piezas-total-val">4</strong></li>
+                        </ul>
+                    </div>
+                    <div class="pagina-footer-stats">
+                        <div class="pagina-rompecabezas">
+                            <span class="rompecabezas-label">Rompecabezas</span>
+                            <div class="rompecabezas-preview">&#129513;</div>
+                        </div>
+                        <div class="pagina-progreso">
+                            <span class="progreso-label">Piezas obtenidas:</span>
+                            <span class="progreso-numero progreso-numero-val">0/4</span>
+                            <div class="progreso-barra">
+                                <div class="progreso-barra-relleno progreso-barra-val"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PÁGINA 10: Epilogo -->
+            <div class="pagina-libro-flip pagina-final" data-density="soft">
+                <div class="pagina-contenido">
+                    <div class="final-decoracion">&#127942;</div>
+                    <h2 class="final-titulo">Felicidades!</h2>
+                    <div class="final-mensaje">
+                        <p>Has completado con exito la historia de este mundo magico con Lumi y Pixel.</p>
+                        <p>Sigue explorando otros mundos para encontrar nuevas piezas magicas.</p>
+                    </div>
+                    <div class="final-rompecabezas-completo">
+                        <span>Rompecabezas Completado:</span>
+                        <div class="recompensa-estrellas" id="final-recompensa-estrellas">&#11088;&#11088;&#11088;&#11088;</div>
+                    </div>
+                    <button class="final-btn-cerrar" id="btn-finalizar-historia">
+                        <span>Finalizar Aventura</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- PÁGINA 11: Contraportada (Tapa dura) -->
+            <div class="pagina-libro-flip cover-back" data-density="hard">
+                <div class="cover-back-diseno">
+                    <div class="cover-back-emblema">LUMIKIDS</div>
+                    <p>Libros Magicos Interactivos</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Boton Flotante Derecho -->
+        <button class="libro-btn-flotante btn-flotante-der" id="btn-flotante-siguiente" aria-label="Pagina siguiente">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+    </div>
+
+    <!-- Mascota Lumi esquina inferior derecha -->
+    <div class="libro-mascota-lumi">
+        <img src="imagenes/zorrito_saludando.png" alt="Lumi">
+    </div>
+
+    <!-- Barra Inferior de Navegacion -->
+    <div class="libro-barra-inferior">
+        <div class="libro-progreso-capitulos">
+            <div class="progreso-estrellas" id="progreso-estrellas-bar"></div>
+            <div class="progreso-barra-capitulos">
+                <div class="progreso-barra-cap-relleno" id="progreso-capitulo" style="width: 0%"></div>
+            </div>
+            <span class="capitulo-indicador" id="capitulo-indicador">Portada</span>
+        </div>
+    </div>
+</div>
+
+    <!-- Biblioteca St.PageFlip -->
+    <script src="../node_modules/page-flip/dist/js/page-flip.browser.js"></script>
+    <!-- Archivos JS -->
+    <script src="bibliotecaData.js"></script>
+    <script src="historia.js"></script>
+    <script src="../libro/libro.js"></script>
+
+</body>
+
+</html>

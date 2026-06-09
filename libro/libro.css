@@ -1,0 +1,1124 @@
+/* ============================================
+   LIBRO MÁGICO - Interfaz Interactiva 3D Premium
+   ============================================ */
+
+/* --- OVERLAY PRINCIPAL --- */
+.overlay-libro {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 20px;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+    opacity: 1;
+    visibility: visible;
+    background: rgba(10, 5, 20, 0.75);
+    backdrop-filter: blur(8px);
+}
+
+.overlay-libro.oculto {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* --- FONDO MÁGICO --- */
+.libro-fondo-magico {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: blur(15px) brightness(0.4);
+    z-index: -2;
+    transition: background-image 0.5s ease;
+}
+
+/* --- PARTÍCULAS MÁGICAS --- */
+.particulas-magicas {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.particula {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.9), rgba(255, 215, 0, 0));
+    border-radius: 50%;
+    animation: flotar-particula 6s infinite ease-in-out;
+}
+
+.particula:nth-child(1)  { left: 5%;  top: 20%; animation-delay: 0s;   animation-duration: 7s; width: 4px; height: 4px; }
+.particula:nth-child(2)  { left: 15%; top: 70%; animation-delay: 1s;   animation-duration: 5s; width: 5px; height: 5px; }
+.particula:nth-child(3)  { left: 25%; top: 40%; animation-delay: 2s;   animation-duration: 8s; }
+.particula:nth-child(4)  { left: 35%; top: 80%; animation-delay: 0.5s; animation-duration: 6s; width: 3px; height: 3px; }
+.particula:nth-child(5)  { left: 50%; top: 15%; animation-delay: 3s;   animation-duration: 7s; width: 7px; height: 7px; }
+.particula:nth-child(6)  { left: 60%; top: 55%; animation-delay: 1.5s; animation-duration: 5s; }
+.particula:nth-child(7)  { left: 70%; top: 30%; animation-delay: 4s;   animation-duration: 6s; width: 4px; height: 4px; }
+.particula:nth-child(8)  { left: 80%; top: 75%; animation-delay: 2.5s; animation-duration: 8s; width: 5px; height: 5px; }
+.particula:nth-child(9)  { left: 90%; top: 45%; animation-delay: 0.8s; animation-duration: 7s; }
+.particula:nth-child(10) { left: 10%; top: 90%; animation-delay: 3.5s; animation-duration: 5s; width: 3px; height: 3px; }
+.particula:nth-child(11) { left: 45%; top: 60%; animation-delay: 1.2s; animation-duration: 6s; width: 8px; height: 8px; }
+.particula:nth-child(12) { left: 75%; top: 10%; animation-delay: 2.8s; animation-duration: 7s; }
+
+@keyframes flotar-particula {
+    0%, 100% { transform: translateY(0) scale(1);    opacity: 0.3; }
+    50%      { transform: translateY(-40px) scale(1.5); opacity: 1; }
+}
+
+/* --- BARRA SUPERIOR --- */
+.libro-barra-superior {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 900px;
+    z-index: 10;
+}
+
+.libro-btn-herramienta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: 3px solid #c9943e;
+    border-radius: 30px;
+    background: linear-gradient(145deg, #3a2a5c, #2a1d45);
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.libro-btn-herramienta svg {
+    width: 16px;
+    height: 16px;
+    stroke: #ffd700;
+    flex-shrink: 0;
+}
+
+.libro-btn-herramienta:hover {
+    background: linear-gradient(145deg, #4d3a78, #3a2a5c);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(201, 148, 62, 0.4);
+}
+
+/* ============================================
+   CONTENEDOR 3D Y LIBRO REAL
+   ============================================ */
+
+.libro-contenedor-3d {
+    position: relative;
+    width: 900px;
+    height: 550px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    z-index: 5;
+    transition: transform 0.4s ease; /* Para escalado responsivo */
+}
+
+.libro-3d {
+    position: relative;
+    width: 450px; /* Ancho de una sola página */
+    height: 100%;
+    transform-style: preserve-3d;
+    perspective: 1800px;
+    transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+/* Lomo central 3D (se mantiene en la costura central del libro abierto) */
+.libro-lomo-3d {
+    position: absolute;
+    left: 0;
+    top: -2px;
+    bottom: -2px;
+    width: 18px;
+    transform: translateX(-50%) translateZ(0.5px);
+    background: linear-gradient(90deg,
+        #5c3d14 0%,
+        #8b6914 20%,
+        #c9943e 50%,
+        #8b6914 80%,
+        #5c3d14 100%
+    );
+    border-radius: 4px;
+    z-index: 100;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+/* --- HOJAS FÍSICAS (SHEETS) --- */
+.hoja-3d {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    transform-origin: left center;
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+/* --- CARAS DE LAS HOJAS (FACES) --- */
+.hoja-cara {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    box-shadow: 
+        inset 0 0 40px rgba(0, 0, 0, 0.05),
+        0 10px 30px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    transition: box-shadow 0.5s ease;
+}
+
+/* Cara Frontal (se ve a la derecha) */
+.hoja-front {
+    transform: rotateY(0deg);
+    z-index: 2;
+    border-radius: 0 16px 16px 0;
+    border-left: 2px solid rgba(0, 0, 0, 0.15);
+}
+
+/* Efecto de pliegue / sombra en el lomo para la derecha */
+.hoja-front::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 40px;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0));
+    pointer-events: none;
+    z-index: 10;
+    border-radius: 0 4px 4px 0;
+}
+
+/* Cara Posterior (se ve a la izquierda al voltear) */
+.hoja-back {
+    transform: rotateY(180deg);
+    z-index: 1;
+    border-radius: 16px 0 0 16px;
+    border-right: 2px solid rgba(0, 0, 0, 0.15);
+}
+
+/* Efecto de pliegue / sombra en el lomo para la izquierda */
+.hoja-back::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 40px;
+    background: linear-gradient(to left, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0));
+    pointer-events: none;
+    z-index: 10;
+    border-radius: 4px 0 0 4px;
+}
+
+/* ============================================
+   ESTILOS DE PORTADA Y CONTRAPORTADA
+   ============================================ */
+
+/* Tapa frontal del libro */
+.cover-front {
+    background: linear-gradient(135deg, #422512 0%, #291509 50%, #170b04 100%);
+    border: 5px solid #8b6914;
+    border-radius: 0 18px 18px 0 !important;
+    box-shadow: 
+        inset 0 0 30px rgba(0,0,0,0.8),
+        0 15px 35px rgba(0,0,0,0.5);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+}
+
+.cover-decoracion-borde {
+    border: 3px double #c9943e;
+    height: 100%;
+    width: 100%;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.cover-estrella-dec {
+    position: absolute;
+    font-size: 1.1rem;
+    color: #ffd700;
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.8);
+}
+.dec-tl { top: 10px; left: 10px; }
+.dec-tr { top: 10px; right: 10px; }
+.dec-bl { bottom: 10px; left: 10px; }
+.dec-br { bottom: 10px; right: 10px; }
+
+.cover-titulo-contenedor {
+    text-align: center;
+    width: 100%;
+}
+
+.cover-badge-mundo {
+    background: linear-gradient(135deg, #c9943e, #ffd700);
+    color: #3e2509;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.cover-titulo {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.85rem;
+    font-weight: 900;
+    color: #ffd700;
+    margin-top: 10px;
+    margin-bottom: 8px;
+    line-height: 1.2;
+    text-shadow: 2px 2px 0px #422512, 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.cover-divisor {
+    width: 60px;
+    height: 3px;
+    background: #ffd700;
+    margin: 0 auto;
+    border-radius: 2px;
+    box-shadow: 0 0 5px rgba(255,215,0,0.6);
+}
+
+.cover-ilustracion {
+    width: 90%;
+    height: 160px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 3.5px solid #ffd700;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+}
+
+.cover-ilustracion img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cover-btn-abrir {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #ffd700, #c9943e);
+    color: #291509;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 25px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+    transition: all 0.2s ease;
+    animation: pulsoBtnAbrir 2s infinite ease-in-out;
+}
+
+.cover-btn-abrir:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 18px rgba(255, 215, 0, 0.6);
+}
+
+@keyframes pulsoBtnAbrir {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.04); box-shadow: 0 6px 16px rgba(255, 215, 0, 0.6); }
+}
+
+/* Tapa trasera del libro */
+.cover-back {
+    background: linear-gradient(225deg, #422512 0%, #291509 50%, #170b04 100%);
+    border: 5px solid #8b6914;
+    border-radius: 18px 0 0 18px !important;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+    padding: 18px;
+}
+
+.cover-back-diseno {
+    border: 3px double #c9943e;
+    height: 100%;
+    width: 100%;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #c9943e;
+    font-family: 'Outfit', sans-serif;
+    box-sizing: border-box;
+}
+
+.cover-back-emblema {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #ffd700;
+    letter-spacing: 2px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    margin-bottom: 5px;
+}
+
+.cover-back-diseno p {
+    font-size: 0.75rem;
+    font-weight: 500;
+    opacity: 0.8;
+    margin: 0;
+}
+
+/* ============================================
+   ESTILOS DE PÁGINAS INTERIORES
+   ============================================ */
+
+.pagina-contenido {
+    width: 100%;
+    height: 100%;
+    padding: 24px 28px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden; /* Garantiza NO SCROLL */
+    background: linear-gradient(135deg, #fdf8eb 0%, #f6edd7 60%, #eee2c5 100%);
+}
+
+.hoja-back .pagina-contenido {
+    background: linear-gradient(225deg, #fdf8eb 0%, #f6edd7 60%, #eee2c5 100%);
+}
+
+/* --- DETALLES DE PÁGINA INTRO --- */
+.pagina-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pagina-estrella {
+    font-size: 1.3rem;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.15));
+}
+
+.pagina-mundo-badge {
+    background: linear-gradient(135deg, #5b3a8c, #7b52b5);
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.pagina-titulo-historia {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 850;
+    color: #3e2509;
+    line-height: 1.15;
+    margin: 4px 0;
+}
+
+.pagina-ilustracion-principal {
+    width: 100%;
+    height: 110px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2.5px solid #c9943e;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.pagina-ilustracion-principal img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.pagina-info-historia {
+    background: rgba(255, 255, 255, 0.45);
+    border: 1px solid rgba(201, 148, 62, 0.25);
+    border-radius: 8px;
+    padding: 6px 10px;
+}
+
+.info-lista {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.72rem;
+    color: #4a341a;
+}
+
+.info-lista li {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.info-icono {
+    font-size: 0.8rem;
+    width: 15px;
+    text-align: center;
+}
+
+.pagina-footer-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.pagina-rompecabezas {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(201, 148, 62, 0.25);
+    border-radius: 8px;
+    padding: 6px;
+}
+
+.rompecabezas-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #3e2509;
+}
+
+.rompecabezas-preview {
+    font-size: 1.4rem;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.pagina-progreso {
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(201, 148, 62, 0.25);
+    border-radius: 8px;
+    padding: 5px 8px;
+    text-align: center;
+}
+
+.progreso-label {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.65rem;
+    color: #4a341a;
+    display: block;
+}
+
+.progreso-numero {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #2d7a3a;
+    line-height: 1;
+}
+
+.progreso-barra {
+    width: 100%;
+    height: 6px;
+    background: #e5dec9;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 3px;
+}
+
+.progreso-barra-relleno {
+    height: 100%;
+    background: linear-gradient(90deg, #2d7a3a, #4caf50);
+    border-radius: 4px;
+    width: 0;
+    transition: width 0.5s ease;
+}
+
+/* --- DETALLES DE PÁGINAS DE CAPÍTULO --- */
+.capitulo-header {
+    display: flex;
+    justify-content: center;
+}
+
+.capitulo-badge {
+    background: linear-gradient(135deg, #5b3a8c, #7b52b5);
+    color: #fff;
+    padding: 3px 12px;
+    border-radius: 12px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    box-shadow: 0 2px 5px rgba(91,58,140,0.2);
+}
+
+.capitulo-titulo {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 850;
+    color: #3e2509;
+    text-align: center;
+    margin: 4px 0;
+}
+
+.capitulo-ilustracion {
+    width: 100%;
+    height: 120px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2.5px solid #c9943e;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.capitulo-ilustracion img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.capitulo-texto {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.78rem;
+    line-height: 1.45;
+    color: #3a2a15;
+    margin: 4px 0;
+}
+
+.capitulo-texto p {
+    margin: 0 0 6px 0;
+}
+.capitulo-texto p:last-child {
+    margin-bottom: 0;
+}
+
+/* Diálogo de personaje inferior */
+.capitulo-dialogo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #eaf5f8, #d3eff7);
+    border-radius: 10px;
+    padding: 6px 10px;
+    border: 1.5px solid #a2d7e8;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.06);
+}
+
+.dialogo-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 1.5px solid #c9943e;
+    flex-shrink: 0;
+}
+
+.dialogo-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.dialogo-burbuja {
+    flex: 1;
+}
+
+.dialogo-nombre {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 750;
+    color: #236e9c;
+    display: block;
+    line-height: 1;
+}
+
+.dialogo-burbuja p {
+    margin: 1px 0 0 0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.72rem;
+    color: #384852;
+    line-height: 1.3;
+}
+
+/* --- DETALLES DE PÁGINA FINAL --- */
+.pagina-final {
+    text-align: center;
+}
+
+.final-decoracion {
+    font-size: 3rem;
+    margin: 10px 0;
+    filter: drop-shadow(0 4px 8px rgba(255,215,0,0.5));
+    animation: flotarCopa 2.5s infinite ease-in-out;
+}
+
+@keyframes flotarCopa {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+.final-titulo {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #2d7a3a;
+    margin: 5px 0;
+}
+
+.final-mensaje {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.78rem;
+    line-height: 1.45;
+    color: #4a341a;
+    margin: 10px 0;
+}
+.final-mensaje p {
+    margin: 0 0 6px 0;
+}
+
+.final-rompecabezas-completo {
+    background: rgba(255, 255, 255, 0.5);
+    border: 1.5px solid #c9943e;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px 0;
+    display: inline-block;
+    width: 80%;
+}
+
+.final-rompecabezas-completo span {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #3e2509;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.recompensa-estrellas {
+    font-size: 1.3rem;
+    letter-spacing: 3px;
+    text-shadow: 0 2px 4px rgba(255,215,0,0.4);
+}
+
+.final-btn-cerrar {
+    background: linear-gradient(135deg, #2d7a3a, #4caf50);
+    color: #fff;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 20px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(45, 122, 58, 0.3);
+    transition: all 0.2s;
+    margin: 10px 0;
+}
+
+.final-btn-cerrar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(45, 122, 58, 0.45);
+}
+
+/* ============================================
+   MASCOTA DE ESQUINA (LUMI REBOTE)
+   ============================================ */
+
+.libro-mascota-lumi {
+    position: fixed;
+    bottom: 15px;
+    right: 25px;
+    z-index: 100;
+    pointer-events: none;
+    animation: reboteLumi 3s infinite ease-in-out;
+}
+
+.libro-mascota-lumi img {
+    width: 90px;
+    height: auto;
+    filter: drop-shadow(0 5px 8px rgba(0,0,0,0.4));
+}
+
+@keyframes reboteLumi {
+    0%, 100% { transform: translateY(0);   }
+    50%      { transform: translateY(-10px); }
+}
+
+/* ============================================
+   BARRA INFERIOR DE NAVEGACIÓN
+   ============================================ */
+
+.libro-barra-inferior {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 900px;
+    z-index: 10;
+}
+
+.libro-btn-nav {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 22px;
+    border: 3px solid #c9943e;
+    border-radius: 30px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.libro-btn-nav svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.libro-btn-anterior {
+    background: linear-gradient(145deg, #3a2a5c, #2a1d45);
+    color: #fff;
+    border-color: #c9943e;
+}
+.libro-btn-anterior svg { stroke: #ffd700; }
+.libro-btn-anterior:hover {
+    background: linear-gradient(145deg, #4d3a78, #3a2a5c);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(201, 148, 62, 0.35);
+}
+
+.libro-btn-anterior.deshabilitado,
+.libro-btn-anterior:disabled {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.libro-btn-siguiente {
+    background: linear-gradient(145deg, #5b3a8c, #7b52b5);
+    color: #fff;
+    border-color: #c9943e;
+}
+.libro-btn-siguiente svg { stroke: #ffd700; }
+.libro-btn-siguiente:hover {
+    background: linear-gradient(145deg, #7b52b5, #9365d4);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(91, 58, 140, 0.45);
+}
+
+/* Progreso de capítulos central */
+.libro-progreso-capitulos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.progreso-estrellas {
+    display: flex;
+    gap: 6px;
+    font-size: 1rem;
+}
+
+.estrella-cap {
+    opacity: 0.4;
+    transition: all 0.3s;
+}
+.estrella-cap.activa {
+    opacity: 1;
+    filter: drop-shadow(0 0 4px rgba(255,215,0,0.8));
+}
+
+.progreso-barra-capitulos {
+    width: 180px;
+    height: 8px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1.5px solid #c9943e;
+}
+
+.progreso-barra-cap-relleno {
+    height: 100%;
+    background: linear-gradient(90deg, #ffd700, #4caf50);
+    border-radius: 10px;
+    width: 0;
+    transition: width 0.5s ease;
+}
+
+.capitulo-indicador {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+}
+
+/* ============================================
+   CONTENEDOR FLIPBOOK (St.PageFlip)
+   ============================================ */
+
+/* Wrapper que contiene el div del libro + botones flotantes */
+.libro-contenedor-flip {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    z-index: 5;
+    flex: 1;
+    width: 100%;
+}
+
+/* El elemento raíz donde St.PageFlip inyecta el canvas/HTML */
+.libro-flipbook {
+    position: relative;
+    box-shadow:
+        0 30px 60px rgba(0, 0, 0, 0.6),
+        0 0 0 2px rgba(201,148,62,0.4);
+    border-radius: 4px;
+}
+
+/* Páginas genéricas que St.PageFlip maneja — deben tener overflow hidden */
+.pagina-libro-flip {
+    overflow: hidden;
+    background: linear-gradient(135deg, #fdf8eb 0%, #f6edd7 60%, #eee2c5 100%);
+    box-sizing: border-box;
+}
+
+/* Sombras que St.PageFlip añade internamente — realzamos con nuestros colores */
+.stf__parent {
+    border-radius: 4px;
+}
+
+/* ============================================
+   BOTONES FLOTANTES DE NAVEGACIÓN
+   ============================================ */
+
+.libro-btn-flotante {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 20;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 3px solid #c9943e;
+    background: linear-gradient(145deg, #3a2a5c, #291d45);
+    color: #ffd700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+        0 6px 20px rgba(0,0,0,0.4),
+        0 0 0 2px rgba(255,215,0,0.15);
+    transition: all 0.25s ease;
+    outline: none;
+}
+
+.libro-btn-flotante svg {
+    width: 22px;
+    height: 22px;
+    stroke: #ffd700;
+    flex-shrink: 0;
+}
+
+.libro-btn-flotante:hover {
+    background: linear-gradient(145deg, #4d3a78, #3a2a5c);
+    transform: translateY(-50%) scale(1.08);
+    box-shadow:
+        0 8px 25px rgba(201,148,62,0.45),
+        0 0 0 3px rgba(255,215,0,0.3);
+}
+
+.btn-flotante-izq {
+    left: -62px;
+}
+
+.btn-flotante-der {
+    right: -62px;
+}
+
+/* Botones con opacidad 0 en los extremos (controlado por JS) */
+.libro-btn-flotante {
+    transition: opacity 0.3s ease, all 0.25s ease;
+}
+
+/* ============================================
+   RESPONSIVIDAD Y AJUSTES EXTRA
+   ============================================ */
+@media (max-width: 900px) {
+    .btn-flotante-izq { left: -44px; }
+    .btn-flotante-der { right: -44px; }
+    .libro-btn-flotante {
+        width: 40px;
+        height: 40px;
+    }
+    .libro-btn-flotante svg {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+@media (max-width: 768px) {
+    .libro-mascota-lumi {
+        display: none;
+    }
+    .btn-flotante-izq { left: 4px; }
+    .btn-flotante-der { right: 4px; }
+    .libro-btn-flotante {
+        width: 36px;
+        height: 36px;
+        opacity: 0.9;
+    }
+}
+
+/* ============================================
+   ST.PAGEFLIP — COMPATIBILIDAD Y ESTILOS INTERNOS
+   ============================================ */
+
+/* StPageFlip inyecta .stf__parent como wrapper del canvas */
+.stf__parent {
+    border-radius: 4px;
+    overflow: visible !important;
+}
+
+/* Las páginas deben ocupar el 100% dentro de StPageFlip */
+.pagina-libro-flip {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+    background: linear-gradient(135deg, #fdf8eb 0%, #f6edd7 60%, #eee2c5 100%);
+    position: relative;
+}
+
+/* Portada: estilo de cuero oscuro */
+.pagina-libro-flip.cover-front {
+    background: linear-gradient(135deg, #422512 0%, #291509 50%, #170b04 100%) !important;
+    border: 4px solid #8b6914;
+}
+
+/* Contraportada */
+.pagina-libro-flip.cover-back {
+    background: linear-gradient(225deg, #422512 0%, #291509 50%, #170b04 100%) !important;
+    border: 4px solid #8b6914;
+}
+
+/* Páginas intro (stats) — tono crema-pergamino más claro */
+.pagina-libro-flip.pagina-intro {
+    background: linear-gradient(150deg, #fef9f0 0%, #f8efd8 60%, #f0e2c0 100%) !important;
+}
+
+/* Página final — tono cálido dorado */
+.pagina-libro-flip.pagina-final {
+    background: linear-gradient(135deg, #fffde7 0%, #fff9c4 50%, #ffecc7 100%) !important;
+    text-align: center;
+}
+
+/* El contenido interior siempre llena la página */
+.pagina-libro-flip .pagina-contenido,
+.pagina-libro-flip .cover-decoracion-borde,
+.pagina-libro-flip .cover-back-diseno {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* Sombra de lomo dinámico que StPageFlip añade — embellecemos */
+.stf__parent .stf__block {
+    border-radius: 2px;
+}
+
+/* Textura de papel sutil para páginas normales */
+.pagina-libro-flip:not(.cover-front):not(.cover-back) {
+    background-image:
+        linear-gradient(135deg, #fdf8eb 0%, #f6edd7 60%, #eee2c5 100%),
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 28px,
+            rgba(180,140,80,0.06) 28px,
+            rgba(180,140,80,0.06) 29px
+        );
+}
+
+/* --- SPINNER DE CARGA MÁGICA --- */
+.libro-cargando {
+    position: absolute;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 5, 20, 0.9);
+    backdrop-filter: blur(12px);
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    opacity: 1;
+    visibility: visible;
+}
+.libro-cargando.oculto {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+.cargando-contenido {
+    text-align: center;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+.cargando-libro-anim {
+    font-size: 5rem;
+    animation: flotar-cargando 1.5s infinite ease-in-out alternate, rotar-cargando 3s infinite linear;
+}
+.cargando-contenido h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.8rem;
+    background: linear-gradient(135deg, #ffd700, #ff88aa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+}
+.cargando-contenido p {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+}
+@keyframes flotar-cargando {
+    from { transform: translateY(0); }
+    to { transform: translateY(-15px); }
+}
+@keyframes rotar-cargando {
+    0% { transform: rotateY(0deg); }
+    50% { transform: rotateY(180deg); }
+    100% { transform: rotateY(360deg); }
+}

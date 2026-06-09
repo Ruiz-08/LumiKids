@@ -1,0 +1,11 @@
+@import url('../paginaPrincipal/paginaDiseno.css');
+
+/* Estilos específicos para la masterpage y las páginas que la hereden si se requiere */
+#contenido-principal {
+    min-height: calc(100vh - 100px - 320px); /* Asegura que el footer no quede flotando si el contenido es muy corto */
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}

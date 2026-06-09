@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUMIKIDS — Mapa de Mundos Mágicos</title>
+    <meta name="description" content="Explora los mundos mágicos de LUMIKIDS y vive aventuras épicas de lectura.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=Fredoka+One&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MotionPathPlugin.min.js"></script>
+
+    <!-- PixiJS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/7.3.2/pixi.min.js"></script>
+
+    <link rel="stylesheet" href="mundo.css">
+</head>
+
+<body>
+
+    <!-- ═══════════════════════════════════════════════════════
+     CANVAS DE PARTÍCULAS MÁGICAS (PixiJS en fondo)
+══════════════════════════════════════════════════════════ -->
+    <canvas id="canvas-particulas"></canvas>
+
+    <!-- ═══════════════════════════════════════════════════════
+     HUD SUPERIOR — Estadísticas del jugador
+══════════════════════════════════════════════════════════ -->
+
+    <!-- ═══════════════════════════════════════════════════════
+     MAPA PRINCIPAL — Contenedor del mundo
+══════════════════════════════════════════════════════════ -->
+    <main class="mapa-contenedor" id="mapa-contenedor">
+
+        <!-- Fondo del mapa -->
+        <div class="mapa-fondo" id="mapa-fondo">
+            <img src="imagenes/fondo.png" alt="Mapa Mágico" class="mapa-fondo-img" id="mapa-img">
+
+            <!-- Decoraciones flotantes sobre el fondo -->
+            <div class="nube nube-1"></div>
+            <div class="nube nube-2"></div>
+            <div class="nube nube-3"></div>
+            <div class="nube nube-4"></div>
+            <div class="rayo-luz rayo-1"></div>
+            <div class="rayo-luz rayo-2"></div>
+
+            <!-- ──────────────────────────────────────────────────
+             CAMINO DORADO MÁGICO (SVG path)
+        ─────────────────────────────────────────────────── -->
+            <svg class="camino-svg" id="camino-svg" viewBox="0 0 1400 900" preserveAspectRatio="none">
+                <!-- Camino base (sombra) -->
+                <path id="camino-sombra" class="camino-path-sombra"
+                    d="M 252,558 Q 180,450 252,342 Q 700,310 1148,342 Q 1220,450 1148,558 Q 960,710 700,738 Q 440,710 252,558"
+                    fill="none" stroke="rgba(0,0,0,0.3)" stroke-width="28" stroke-linecap="round" />
+                <!-- Camino dorado -->
+                <path id="camino-dorado" class="camino-path"
+                    d="M 252,558 Q 180,450 252,342 Q 700,310 1148,342 Q 1220,450 1148,558 Q 960,710 700,738 Q 440,710 252,558"
+                    fill="none" stroke="url(#gradCamino)" stroke-width="20" stroke-linecap="round"
+                    stroke-dasharray="2200" stroke-dashoffset="2200" />
+                <!-- Puntos de huellas doradas -->
+                <path id="camino-huellas" class="camino-huellas"
+                    d="M 252,558 Q 180,450 252,342 Q 700,310 1148,342 Q 1220,450 1148,558 Q 960,710 700,738 Q 440,710 252,558"
+                    fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="6" stroke-linecap="round"
+                    stroke-dasharray="12 18" />
+                <defs>
+                    <linearGradient id="gradCamino" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#ffd700;stop-opacity:1" />
+                        <stop offset="40%" style="stop-color:#ffec6e;stop-opacity:1" />
+                        <stop offset="70%" style="stop-color:#f4a800;stop-opacity:0.8" />
+                        <stop offset="100%" style="stop-color:#c8860060;stop-opacity:0.4" />
+                    </linearGradient>
+                </defs>
+            </svg>
+
+            <!-- ──────────────────────────────────────────────────
+             MUNDO 1: BOSQUE ENCANTADO (Desbloqueado)
+        ─────────────────────────────────────────────────── -->
+            <div class="mundo-nodo" id="mundo-bosque" data-mundo="bosque" data-desbloqueado="true"
+                style="left: 27%; top: 29%;">
+                <div class="mundo-isla mundo-isla-bosque">
+                    <div class="mundo-imagen-wrap">
+                        <img src="imagenes/bosque.png" alt="Bosque Encantado" class="mundo-img">
+                        <div class="mundo-brillo-aura mundo-brillo-verde"></div>
+                    </div>
+                    <div class="mundo-numero">1</div>
+                    <!-- Luciérnagas decorativas -->
+                    <div class="luciernaga luc-1"></div>
+                    <div class="luciernaga luc-2"></div>
+                    <div class="luciernaga luc-3"></div>
+                </div>
+
+            </div>
+
+            <!-- ──────────────────────────────────────────────────
+             MUNDO 2: ISLA PIRATA (Bloqueado)
+        ─────────────────────────────────────────────────── -->
+            <div class="mundo-nodo" id="mundo-pirata" data-mundo="pirata" data-desbloqueado="false"
+                style="left: 72%; top: 30%;">
+                <div class="mundo-isla mundo-isla-pirata bloqueado">
+                    <div class="mundo-imagen-wrap">
+                        <img src="imagenes/pirata.png" alt="Isla Pirata" class="mundo-img">
+                        <div class="mundo-brillo-aura mundo-brillo-naranja"></div>
+                        <div class="mundo-candado">
+                            <div class="candado-icono">🔒</div>
+                        </div>
+                    </div>
+                    <div class="mundo-numero">2</div>
+                </div>
+
+            </div>
+
+            <!-- ──────────────────────────────────────────────────
+             MUNDO 3: PLANETA DE LAS LETRAS (Bloqueado)
+        ─────────────────────────────────────────────────── -->
+            <div class="mundo-nodo" id="mundo-letras" data-mundo="letras" data-desbloqueado="false"
+                style="left: 18%; top: 62%;">
+                <div class="mundo-isla mundo-isla-letras bloqueado">
+                    <div class="mundo-imagen-wrap">
+                        <img src="imagenes/letras.png" alt="Planeta de las Letras" class="mundo-img">
+                        <div class="mundo-brillo-aura mundo-brillo-azul"></div>
+                        <div class="mundo-candado">
+                            <div class="candado-icono">🔒</div>
+                        </div>
+                    </div>
+                    <div class="mundo-numero">3</div>
+                </div>
+
+            </div>
+
+            <!-- ──────────────────────────────────────────────────
+             MUNDO 4: REINO DRAGÓN (Bloqueado)
+        ─────────────────────────────────────────────────── -->
+            <div class="mundo-nodo" id="mundo-dragones" data-mundo="dragones" data-desbloqueado="false"
+                style="left: 50%; top: 82%;">
+                <div class="mundo-isla mundo-isla-dragones bloqueado">
+                    <div class="mundo-imagen-wrap">
+                        <img src="imagenes/dragon.png" alt="Reino Dragón" class="mundo-img">
+                        <div class="mundo-brillo-aura mundo-brillo-rojo"></div>
+                        <div class="mundo-candado">
+                            <div class="candado-icono">🔒</div>
+                        </div>
+                    </div>
+                    <div class="mundo-numero">4</div>
+                </div>
+
+            </div>
+
+            <!-- ──────────────────────────────────────────────────
+             MUNDO 5: CIUDAD DORADA (Bloqueado)
+        ─────────────────────────────────────────────────── -->
+            <div class="mundo-nodo" id="mundo-ciudad" data-mundo="ciudad" data-desbloqueado="false"
+                style="left: 80%; top: 60%;">
+                <div class="mundo-isla mundo-isla-ciudad bloqueado">
+                    <div class="mundo-imagen-wrap">
+                        <img src="imagenes/ciudad.png" alt="Ciudad Dorada" class="mundo-img">
+                        <div class="mundo-brillo-aura mundo-brillo-dorado"></div>
+                        <div class="mundo-candado">
+                            <div class="candado-icono">🔒</div>
+                        </div>
+                    </div>
+                    <div class="mundo-numero">5</div>
+                </div>
+
+            </div>
+
+            <!-- ──────────────────────────────────────────────────
+             PERSONAJE LUMI — Sobre el mapa
+        ─────────────────────────────────────────────────── -->
+            <div class="lumi-personaje" id="lumi-personaje" style="left: 15%; top: 50%;">
+                <div class="lumi-sombra"></div>
+                <img src="../paginaPrincipal/imagenes/lumi_zorro-r.png" alt="Lumi" class="lumi-img" id="lumi-img">
+            </div>
+
+        </div><!-- /.mapa-fondo -->
+    </main>
+
+    <!-- ═══════════════════════════════════════════════════════
+     BARRA INFERIOR — Navegación
+══════════════════════════════════════════════════════════ -->
+    <!-- ═══════════════════════════════════════════════════════
+     BARRA INFERIOR — Navegación
+    ══════════════════════════════════════════════════════════ -->
+    <nav class="barra-inferior" id="barra-inferior">
+        <!-- Lado Izquierdo: Mini-Perfil -->
+        <div class="nav-perfil">
+            <div class="nav-perfil-avatar">
+                <img src="../paginaPrincipal/imagenes/lumi_zorro-r.png" alt="Lumi" class="nav-perfil-img">
+                <div class="nav-perfil-nivel">Nv.4</div>
+            </div>
+            <div class="nav-perfil-info">
+                <span class="nav-perfil-nombre">Lumi</span>
+                <div class="nav-perfil-xp">
+                    <div class="nav-perfil-xp-barra">
+                        <div class="nav-perfil-xp-relleno" style="width: 65%"></div>
+                    </div>
+                    <span class="nav-perfil-xp-texto">650 / 1000 XP</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lado Derecho: Opciones de Navegación -->
+        <div class="nav-opciones">
+            <a href="mundo.html" class="nav-item activo" id="nav-mundos">
+                <div class="nav-item-icono">🌍</div>
+                <span>Mundos</span>
+            </a>
+            <a href="../historias/historia.html" class="nav-item" id="nav-biblioteca">
+                <div class="nav-item-icono">📚</div>
+                <span>Biblioteca</span>
+            </a>
+            <a href="../paginaPrincipal/PaginaP.html#seccion-logros" class="nav-item" id="nav-desafios">
+                <div class="nav-item-icono">🏆</div>
+                <span>Desafíos</span>
+            </a>
+            <a href="../paginaPrincipal/PaginaP.html#seccion-logros" class="nav-item" id="nav-perfil">
+                <div class="nav-item-icono">👤</div>
+                <span>Perfil</span>
+            </a>
+            <a href="../paginaPrincipal/PaginaP.html#seccion-contacto" class="nav-item" id="nav-ajustes">
+                <div class="nav-item-icono">⚙️</div>
+                <span>Ajustes</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- ═══════════════════════════════════════════════════════
+     PANEL LATERAL DINÁMICO
+    ══════════════════════════════════════════════════════════ -->
+    <aside class="panel-lateral" id="panel-lateral">
+        <button class="panel-cerrar" id="panel-cerrar" aria-label="Cerrar panel">×</button>
+        <div class="panel-contenido">
+            <div class="panel-mundo-imagen-wrap">
+                <div class="panel-mundo-brillo-back"></div>
+                <img src="" alt="Mundo" class="panel-mundo-img" id="panel-mundo-img">
+            </div>
+            <h2 class="panel-mundo-titulo" id="panel-mundo-titulo">Nombre del Mundo</h2>
+            <p class="panel-mundo-descripcion" id="panel-mundo-descripcion">Descripción del mundo.</p>
+            
+            <div class="panel-stats">
+                <div class="panel-stat">
+                    <span class="panel-stat-icono">📚</span>
+                    <div class="panel-stat-textos">
+                        <span class="panel-stat-label">Historias</span>
+                        <strong class="panel-stat-valor" id="panel-stat-historias">0</strong>
+                    </div>
+                </div>
+                <div class="panel-stat">
+                    <span class="panel-stat-icono">🧩</span>
+                    <div class="panel-stat-textos">
+                        <span class="panel-stat-label">Piezas</span>
+                        <strong class="panel-stat-valor" id="panel-stat-piezas">0 / 0</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-progreso-seccion">
+                <div class="panel-progreso-meta">
+                    <span>Progreso</span>
+                    <strong id="panel-progreso-porcentaje">0%</strong>
+                </div>
+                <div class="panel-progreso-barra">
+                    <div class="panel-progreso-relleno" id="panel-progreso-relleno" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="panel-alerta-bloqueo" id="panel-alerta-bloqueo">
+                <span class="alerta-icono">🔒</span>
+                <span class="alerta-texto" id="panel-alerta-texto">Completa las piezas requeridas para desbloquear este mundo.</span>
+            </div>
+
+            <div class="panel-acciones">
+                <button class="panel-btn-entrar" id="panel-btn-entrar">
+                    <span>Entrar al Mundo</span>
+                </button>
+                <button class="panel-btn-cerrar" id="panel-btn-cerrar-secundario">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ═══════════════════════════════════════════════════════
+     PANTALLA DE ZOOM — Al entrar a un mundo
+══════════════════════════════════════════════════════════ -->
+    <div class="zoom-overlay" id="zoom-overlay">
+        <div class="zoom-contenido" id="zoom-contenido">
+            <div class="zoom-emoji" id="zoom-emoji">🌳</div>
+            <h2 class="zoom-titulo" id="zoom-titulo">Bosque Encantado</h2>
+            <p class="zoom-subtitulo">Preparando tu aventura...</p>
+            <div class="zoom-loader">
+                <div class="zoom-loader-barra"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="mundo.js"></script>
+</body>
+
+</html>

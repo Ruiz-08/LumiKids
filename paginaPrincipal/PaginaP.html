@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUMIKIDS - Lee, juega y reconstruye mundos mágicos</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="paginaDiseno.css">
+</head>
+
+<body>
+
+    <!-- Barra de Navegación -->
+    <header class="encabezado-navegacion">
+        <div class="contenedor-navegacion">
+            <!-- Logo Lumikids -->
+            <a href="#" class="logotipo-contenedor">
+                <span class="marca-lumikids">LUMI<span class="marca-kids">KIDS</span></span>
+                <span class="lema-lumikids">Lee, juega y reconstruye mundos mágicos</span>
+            </a>
+
+            <!-- Enlaces del Menú -->
+            <nav class="menu-navegacion">
+                <a href="PaginaP.html" class="enlace-navegacion activo" id="enlace-inicio">
+                    <svg class="icono-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                        <polyline points="9 22 9 12 15 12 15 22" />
+                    </svg>
+                    Inicio
+                </a>
+                <a href="../historias/historia.html" class="enlace-navegacion" id="enlace-historias">
+                    <svg class="icono-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
+                        <path d="M6 6h10M6 10h10" />
+                    </svg>
+                    Historias
+                </a>
+                <a href="../mundos/mundo.html" class="enlace-navegacion" id="enlace-mundos">
+                    <svg class="icono-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+                        <path d="M2 12h20" />
+                    </svg>
+                    Mundos
+                </a>
+                <a href="#seccion-logros" class="enlace-navegacion" id="enlace-logros">
+                    <svg class="icono-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                        <path d="M4 22h16" />
+                        <path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34" />
+                        <path d="M12 2a15.3 15.3 0 0 1 4 7H8a15.3 15.3 0 0 1 4-7z" />
+                    </svg>
+                    Logros
+                </a>
+                <a href="#seccion-padres" class="enlace-navegacion" id="enlace-padres">
+                    <svg class="icono-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                    Padres
+                </a>
+                <a href="#seccion-contacto" class="enlace-navegacion" id="enlace-contacto">
+                    <svg class="icono-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect width="20" height="16" x="2" y="4" rx="2" />
+                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                    </svg>
+                    Contacto
+                </a>
+            </nav>
+
+            <!-- Botones de Acción -->
+            <div class="botones-encabezado">
+                <button class="boton-iniciar-sesion" id="boton-iniciar-sesion">
+                    <svg class="icono-boton" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                        <polyline points="10 17 15 12 10 7" />
+                        <line x1="15" x2="3" y1="12" y2="12" />
+                    </svg>
+                    Iniciar sesión
+                </button>
+                <button class="boton-registrarse" id="boton-registrarse">
+                    <svg class="icono-boton" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <line x1="19" x2="19" y1="8" y2="14" />
+                        <line x1="16" x2="22" y1="11" y2="11" />
+                    </svg>
+                    Registrarse
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="cuerpo-principal">
+
+        <!-- Sección Héroe (Hero Section) -->
+        <section class="seccion-heroe">
+            <div class="contenedor-heroe">
+                <!-- Columna Izquierda: Mensajes y CTAs -->
+                <div class="heroe-info">
+                    <h1 class="heroe-titulo">
+                        Lee historias, <br>
+                        <span class="texto-resaltado-rosa">supera desafíos</span> y <br>
+                        <span class="texto-resaltado-morado">reconstruye mundos mágicos</span>
+                    </h1>
+                    <p class="heroe-descripcion">
+                        Cada sección que lees te recompensa con una pieza para reconstruir increíbles aventuras.
+                    </p>
+                    <div class="heroe-acciones">
+                        <button class="boton-accion-principal" id="boton-comenzar" onclick="window.location.href='../mundos/mundo.html';">
+                            <svg class="icono-accion" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <path
+                                    d="M4.5 16.5c-1.5 1.25-2.5 3.5-2.5 3.5s2.25-1 3.5-2.5L17.5 5.5a2.12 2.12 0 1 0-3-3L4.5 16.5Z" />
+                                <path d="m12 5 3 3" />
+                            </svg>
+                            Comenzar aventura
+                        </button>
+                        <button class="boton-accion-secundario" id="boton-explorar" onclick="window.location.href='../historias/historia.html';">
+                            <svg class="icono-accion" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                            </svg>
+                            Explorar historias
+                        </button>
+                    </div>
+
+                    <!-- Insignias de Confianza/Valor -->
+                    <div class="fila-insignias">
+                        <div class="insignia-item educativo">
+                            <div class="insignia-icono">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path
+                                        d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+                                    <path d="m9 12 2 2 4-4" />
+                                </svg>
+                            </div>
+                            <div class="insignia-texto">
+                                <strong>Educativo</strong>
+                                <span>Aprende leyendo</span>
+                            </div>
+                        </div>
+                        <div class="insignia-item divertido">
+                            <div class="insignia-icono">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect width="20" height="12" x="2" y="6" rx="2" />
+                                    <path d="M6 12h4M8 10v4" />
+                                    <circle cx="15" cy="12" r="1" />
+                                    <circle cx="18" cy="12" r="1" />
+                                </svg>
+                            </div>
+                            <div class="insignia-texto">
+                                <strong>Divertido</strong>
+                                <span>Juega y disfruta</span>
+                            </div>
+                        </div>
+                        <div class="insignia-item seguro">
+                            <div class="insignia-icono">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                                </svg>
+                            </div>
+                            <div class="insignia-texto">
+                                <strong>Seguro</strong>
+                                <span>Entorno protegido</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna Derecha Unificada: Contenedor Mascota + Interactivo -->
+                <div class="heroe-interactivo-contenedor">
+                    <!-- Mascota Lumi (posicionada sobre el fondo al lado del rompecabezas) -->
+                    <div class="heroe-mascota-contenedor">
+                        <img src="imagenes/lumi_zorro-r.png" alt="Mascota Lumi" class="mascota-lumi-hero">
+                    </div>
+
+
+                    <!-- Columna Derecha: Rompecabezas & Estadísticas -->
+                    <div class="heroe-interactivo">
+                        <!-- Tablero de Rompecabezas -->
+                        <div class="rompecabezas-contenedor">
+                            <div class="tablero-madera">
+                                <img src="imagenes/tablero_rompecabezas.png" alt="Tablero Rompecabezas"
+                                    class="imagen-tablero-base">
+
+                                <!-- Piezas Interactivas superpuestas -->
+                                <div class="rejilla-piezas" id="rejilla-piezas">
+                                    <!-- Las piezas se generarán con JS o se definirán aquí -->
+                                    <div class="pieza-ranura" data-pieza="1"></div>
+                                    <div class="pieza-ranura" data-pieza="2"></div>
+                                    <div class="pieza-ranura" data-pieza="3"></div>
+                                    <div class="pieza-ranura" data-pieza="4"></div>
+                                    <div class="pieza-ranura" data-pieza="5"></div>
+                                    <div class="pieza-ranura" data-pieza="6"></div>
+                                    <div class="pieza-ranura" data-pieza="7"></div>
+                                    <div class="pieza-ranura bloqueada" data-pieza="8"><img
+                                            src="imagenes/desbloquear.png" alt="Bloqueado" class="icono-bloqueo"></div>
+                                </div>
+                            </div>
+
+                            <!-- Barra de Progreso del Rompecabezas -->
+                            <div class="rompecabezas-progreso-barra">
+                                <span class="progreso-texto-titulo">Tu progreso en el Bosque Encantado</span>
+                                <div class="linea-progreso-fondo">
+                                    <div class="linea-progreso-llena" id="progreso-linea" style="width: 40%;"></div>
+                                </div>
+                                <span class="progreso-contador" id="progreso-contador-texto">8/20</span>
+                            </div>
+                        </div>
+
+                        <!-- Panel de Estadísticas del Usuario -->
+                        <div class="panel-estadisticas" id="seccion-logros">
+                            <div class="estadistica-tarjeta-mini">
+                                <div class="estadistica-mini-icono estrella-nivel">
+                                    <i class="bi bi-star-fill"></i>
+                                </div>
+                                <div class="estadistica-mini-info">
+                                    <span class="estadistica-mini-valor">Nivel 3</span>
+                                    <span class="estadistica-mini-etiqueta">Aventurero</span>
+                                </div>
+                            </div>
+
+                            <div class="estadistica-tarjeta-mini">
+                                <div class="estadistica-mini-icono estrella-moneda">
+                                    <i class="bi bi-star-fill"></i>
+                                </div>
+                                <div class="estadistica-mini-info">
+                                    <span class="estadistica-mini-valor" id="contador-estrellas">150</span>
+                                    <span class="estadistica-mini-etiqueta">Estrellas</span>
+                                </div>
+                            </div>
+
+                            <div class="estadistica-tarjeta-mini">
+                                <div class="estadistica-mini-icono moneda-oro">
+                                    <i class="bi bi-coin"></i>
+                                </div>
+                                <div class="estadistica-mini-info">
+                                    <span class="estadistica-mini-valor" id="contador-monedas">320</span>
+                                    <span class="estadistica-mini-etiqueta">Monedas</span>
+                                </div>
+                            </div>
+
+                            <div class="estadistica-tarjeta-mini">
+                                <div class="estadistica-mini-icono fuego-racha">
+                                    <i class="bi bi-fire"></i>
+                                </div>
+                                <div class="estadistica-mini-info">
+                                    <span class="estadistica-mini-valor" id="contador-racha">7</span>
+                                    <span class="estadistica-mini-etiqueta">Días de racha</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección: ¿Cómo funciona? -->
+        <section class="seccion-pasos">
+            <h2 class="titulo-seccion-general">
+                <span class="icono-titulo">🍃</span> ¿Cómo funciona? <span class="icono-titulo">🍃</span>
+            </h2>
+
+            <div class="contenedor-pasos">
+                <!-- Paso 1 -->
+                <div class="tarjeta-paso">
+                    <div class="paso-circulo-numero">1</div>
+                    <div class="paso-icono libro">
+                        <i class="bi bi-book"></i>
+                    </div>
+                    <h3 class="paso-titulo">1. Lee</h3>
+                    <p class="paso-descripcion">Disfruta cada sección de la historia.</p>
+                </div>
+
+                <div class="flecha-conector">➔</div>
+
+                <!-- Paso 2 -->
+                <div class="tarjeta-paso">
+                    <div class="paso-circulo-numero">2</div>
+                    <div class="paso-icono control">
+                        <i class="bi bi-controller"></i>
+                    </div>
+                    <h3 class="paso-titulo">2. Resuelve</h3>
+                    <p class="paso-descripcion">Supera el desafío de palabras (ahorcado).</p>
+                </div>
+
+                <div class="flecha-conector">➔</div>
+
+                <!-- Paso 3 -->
+                <div class="tarjeta-paso">
+                    <div class="paso-circulo-numero">3</div>
+                    <div class="paso-icono pieza">
+                        <i class="bi bi-puzzle"></i>
+                    </div>
+                    <h3 class="paso-titulo">3. Gana pieza</h3>
+                    <p class="paso-descripcion">Obtén una pieza del rompecabezas del mundo.</p>
+                </div>
+
+                <div class="flecha-conector">➔</div>
+
+                <!-- Paso 4 -->
+                <div class="tarjeta-paso">
+                    <div class="paso-circulo-numero">4</div>
+                    <div class="paso-icono rompecabezas-paso">
+                        <i class="bi bi-puzzle-fill"></i>
+                    </div>
+                    <h3 class="paso-titulo">4. Completa</h3>
+                    <p class="paso-descripcion">Arma el rompecabezas y descubre la imagen final.</p>
+                </div>
+
+                <div class="flecha-conector">➔</div>
+
+                <!-- Paso 5 -->
+                <div class="tarjeta-paso">
+                    <div class="paso-circulo-numero">5</div>
+                    <div class="paso-icono cohete">
+                        <i class="bi bi-rocket-takeoff"></i>
+                    </div>
+                    <h3 class="paso-titulo">5. Desbloquea</h3>
+                    <p class="paso-descripcion">Completa mundos y vive nuevas aventuras.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección: Mundos Disponibles -->
+        <section class="seccion-mundos">
+            <div class="cabecera-mundos">
+                <h2 class="titulo-seccion-general inline">
+                    <span class="icono-titulo">🍃</span> Mundos disponibles <span class="icono-titulo">🍃</span>
+                </h2>
+                <a href="../mundos/mundo.html" class="enlace-ver-todos">Ver todos</a>
+            </div>
+
+            <!-- Carrusel de Tarjetas -->
+            <div class="carrusel-contenedor">
+                <button class="boton-carrusel anterior" id="carrusel-ant">❮</button>
+
+                <div class="carrusel-carril" id="carrusel-carril">
+                    <!-- Mundo 1 (Bosque Encantado - Activo) -->
+                    <div class="tarjeta-mundo activo">
+                        <div class="mundo-imagen-wrapper">
+                            <img src="imagenes/mundo_bosque.png" alt="Bosque Encantado" class="imagen-mundo">
+                            <div class="badges-mundo">
+                                <span class="badge-mundo verde">8/20 piezas</span>
+                                <span class="badge-mundo azul">0/10 desafíos</span>
+                            </div>
+                        </div>
+                        <div class="mundo-info">
+                            <h3 class="mundo-nombre">Bosque Encantado</h3>
+                            <button class="boton-mundo-continuar" onclick="window.location.href='../mundos/mundo.html?mundo=bosque';">Continuar</button>
+                        </div>
+                    </div>
+
+                    <!-- Mundo 2 (Isla Pirata - Bloqueado) -->
+                    <div class="tarjeta-mundo bloqueado">
+                        <div class="mundo-imagen-wrapper">
+                            <img src="imagenes/mundo_pirata.png" alt="Isla Pirata" class="imagen-mundo">
+                            <div class="capa-bloqueo">
+                                <img src="imagenes/desbloquear.png" alt="Bloqueado" class="icono-candado-grande">
+                            </div>
+                            <div class="badges-mundo">
+                                <span class="badge-mundo gris">0/25 piezas</span>
+                            </div>
+                        </div>
+                        <div class="mundo-info">
+                            <h3 class="mundo-nombre">Isla Pirata</h3>
+                            <button class="boton-mundo-bloqueado" disabled>Bloqueado</button>
+                        </div>
+                    </div>
+
+                    <!-- Mundo 3 (Planeta de las Letras - Bloqueado) -->
+                    <div class="tarjeta-mundo bloqueado">
+                        <div class="mundo-imagen-wrapper">
+                            <img src="imagenes/mundo_letras.png" alt="Planeta de las Letras" class="imagen-mundo">
+                            <div class="capa-bloqueo">
+                                <img src="imagenes/desbloquear.png" alt="Bloqueado" class="icono-candado-grande">
+                            </div>
+                            <div class="badges-mundo">
+                                <span class="badge-mundo gris">0/30 piezas</span>
+                            </div>
+                        </div>
+                        <div class="mundo-info">
+                            <h3 class="mundo-nombre">Planeta de las Letras</h3>
+                            <button class="boton-mundo-bloqueado" disabled>Bloqueado</button>
+                        </div>
+                    </div>
+
+                    <!-- Mundo 4 (Reino de Dragones - Bloqueado) -->
+                    <div class="tarjeta-mundo bloqueado">
+                        <div class="mundo-imagen-wrapper">
+                            <img src="imagenes/mundo_dragon.png" alt="Reino de Dragones" class="imagen-mundo">
+                            <div class="capa-bloqueo">
+                                <img src="imagenes/desbloquear.png" alt="Bloqueado" class="icono-candado-grande">
+                            </div>
+                            <div class="badges-mundo">
+                                <span class="badge-mundo gris">0/35 piezas</span>
+                            </div>
+                        </div>
+                        <div class="mundo-info">
+                            <h3 class="mundo-nombre">Reino de Dragones</h3>
+                            <button class="boton-mundo-bloqueado" disabled>Bloqueado</button>
+                        </div>
+                    </div>
+
+                    <!-- Mundo 5 (Ciudad Dorada - Bloqueado) -->
+                    <div class="tarjeta-mundo bloqueado">
+                        <div class="mundo-imagen-wrapper">
+                            <img src="imagenes/mundo_ciudad.png" alt="Ciudad Dorada" class="imagen-mundo">
+                            <div class="capa-bloqueo">
+                                <img src="imagenes/desbloquear.png" alt="Bloqueado" class="icono-candado-grande">
+                            </div>
+                            <div class="badges-mundo">
+                                <span class="badge-mundo gris">0/40 piezas</span>
+                            </div>
+                        </div>
+                        <div class="mundo-info">
+                            <h3 class="mundo-nombre">Ciudad Dorada</h3>
+                            <button class="boton-mundo-bloqueado" disabled>Bloqueado</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="boton-carrusel siguiente" id="carrusel-sig">❯</button>
+            </div>
+        </section>
+
+        <!-- Bloque Inferior Grid de Tres Columnas -->
+        <section class="grid-inferior">
+            <!-- Columna 1: Conoce a tus amigos -->
+            <div class="tarjeta-seccion-inferior amigos-seccion">
+                <h3 class="titulo-inferior">Conoce a tus amigos</h3>
+                <div class="contenedor-amigos">
+                    <div class="amigo-tarjeta" data-amigo="lumi">
+                        <div class="amigo-avatar-wrapper">
+                            <img src="imagenes\lumi_zorro-r.png" alt="Lumi" class="imagen-amigo">
+                        </div>
+                        <h4 class="amigo-nombre">Lumi</h4>
+                        <p class="amigo-descripcion">Tu guía en cada aventura.</p>
+                    </div>
+
+                    <div class="amigo-tarjeta" data-amigo="nubo">
+                        <div class="amigo-avatar-wrapper">
+                            <img src="imagenes/nubo_oso.png" alt="Nubo" class="imagen-amigo">
+                        </div>
+                        <h4 class="amigo-nombre">Nubo</h4>
+                        <p class="amigo-descripcion">Te ayuda a entender y aprender.</p>
+                    </div>
+
+                    <div class="amigo-tarjeta" data-amigo="pixel">
+                        <div class="amigo-avatar-wrapper">
+                            <img src="imagenes/pixel_buho.png" alt="Pixel" class="imagen-amigo">
+                        </div>
+                        <h4 class="amigo-nombre">Pixel</h4>
+                        <p class="amigo-descripcion">Te da pistas para superar desafíos.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna 2: Lumikids en números -->
+            <div class="tarjeta-seccion-inferior numeros-seccion">
+                <h3 class="titulo-inferior">Lumikids en números</h3>
+                <div class="grid-numeros">
+                    <div class="tarjeta-numero">
+                        <div class="numero-icono libro-num">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
+                            </svg>
+                        </div>
+                        <div class="numero-datos">
+                            <span class="numero-valor" data-meta="500">0</span>
+                            <span class="numero-etiqueta">Historias interactivas</span>
+                        </div>
+                    </div>
+
+                    <div class="tarjeta-numero">
+                        <div class="numero-icono control-num">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <rect width="20" height="12" x="2" y="6" rx="2" />
+                                <path d="M6 12h4M8 10v4" />
+                            </svg>
+                        </div>
+                        <div class="numero-datos">
+                            <span class="numero-valor" data-meta="100">0</span>
+                            <span class="numero-etiqueta">Desafíos educativos</span>
+                        </div>
+                    </div>
+
+                    <div class="tarjeta-numero">
+                        <div class="numero-icono pieza-num">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+                            </svg>
+                        </div>
+                        <div class="numero-datos">
+                            <span class="numero-valor" data-meta="20">0</span>
+                            <span class="numero-etiqueta">Mundos mágicos</span>
+                        </div>
+                    </div>
+
+                    <div class="tarjeta-numero">
+                        <div class="numero-icono niños-num">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                            </svg>
+                        </div>
+                        <div class="numero-datos">
+                            <span class="numero-valor" data-meta="10000">0</span>
+                            <span class="numero-etiqueta">Niños felices</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna 3: Para Padres -->
+            <div class="tarjeta-seccion-inferior padres-seccion" id="seccion-padres">
+                <div class="padres-contenido">
+                    <h3 class="titulo-inferior">Para padres</h3>
+                    <p class="padres-descripcion-texto">
+                        Acompaña el progreso de tu hijo y descubre su crecimiento en cada aventura.
+                    </p>
+                    <ul class="padres-checklist">
+                        <li>
+                            <span class="checklist-icono">✓</span>
+                            Reportes de progreso
+                        </li>
+                        <li>
+                            <span class="checklist-icono">✓</span>
+                            Tiempo de lectura
+                        </li>
+                        <li>
+                            <span class="checklist-icono">✓</span>
+                            Logros y recomendaciones
+                        </li>
+                    </ul>
+                    <button class="boton-padres-cta" id="boton-panel-padres">Ver panel para padres</button>
+                </div>
+                <div class="padres-imagen-wrapper">
+                    <img src="imagenes/padres_familia.png" alt="Familia" class="imagen-padres-familia">
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal Iniciar Sesión / Registrarse -->
+    <div class="capa-modal" id="modal-autenticacion">
+        <div class="tarjeta-modal">
+            <button class="boton-cerrar-modal" id="cerrar-modal">×</button>
+            <div class="modal-cabecera">
+                <span class="marca-lumikids">LUMI<span class="marca-kids">KIDS</span></span>
+                <h3 id="modal-titulo">Iniciar Sesión</h3>
+            </div>
+            <form class="modal-formulario" id="formulario-autenticacion"
+                onsubmit="event.preventDefault(); alert('¡Simulación completada con éxito!');">
+                <div class="campo-formulario">
+                    <label for="modal-correo">Correo electrónico</label>
+                    <input type="email" id="modal-correo" required placeholder="tuemail@correo.com">
+                </div>
+                <div class="campo-formulario">
+                    <label for="modal-contraseña">Contraseña</label>
+                    <input type="password" id="modal-contraseña" required placeholder="••••••••">
+                </div>
+                <div class="campo-formulario campo-registro-oculto" id="campo-nombre-registro">
+                    <label for="modal-nombre">Nombre del niño</label>
+                    <input type="text" id="modal-nombre" placeholder="Ej. Mateo">
+                </div>
+                <button type="submit" class="boton-enviar-formulario" id="boton-modal-enviar">Entrar</button>
+            </form>
+            <div class="modal-pie">
+                <span id="texto-alternativo-modal">¿No tienes cuenta?</span>
+                <a href="#" id="enlace-alternativo-modal">Regístrate</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pie de Página (Footer) -->
+    <footer class="pie-pagina">
+        <div class="contenedor-pie">
+            <!-- Columna Logo e Redes -->
+            <div class="columna-pie columna-logo-redes">
+                <a href="#" class="logotipo-contenedor blanco">
+                    <span class="marca-lumikids">LUMI<span class="marca-kids">KIDS</span></span>
+                    <span class="lema-lumikids">Lee, juega y reconstruye mundos mágicos</span>
+                </a>
+            </div>
+
+            <!-- Columna Enlaces 2 -->
+            <div class="columna-pie">
+                <h4 class="titulo-columna-pie">Ayuda</h4>
+                <ul class="enlaces-pie">
+                    <li><a href="#">Preguntas frecuentes</a></li>
+                    <li><a href="#">Centro de ayuda</a></li>
+                    <li><a href="#">Soporte</a></li>
+                </ul>
+            </div>
+
+            <!-- Columna Enlaces 3 -->
+            <div class="columna-pie">
+                <h4 class="titulo-columna-pie">Recursos</h4>
+                <ul class="enlaces-pie">
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Guías para padres</a></li>
+                    <li><a href="#">Actividades</a></li>
+                </ul>
+            </div>
+
+            <!-- Columna Enlaces 4 -->
+            <div class="columna-pie">
+                <h4 class="titulo-columna-pie">Legal</h4>
+                <ul class="enlaces-pie">
+                    <li><a href="#">Términos y condiciones</a></li>
+                    <li><a href="#">Política de privacidad</a></li>
+                </ul>
+            </div>
+
+            <!-- Columna Contacto -->
+            <div class="columna-pie columna-contacto" id="seccion-contacto">
+                <h4 class="titulo-columna-pie">Contacto</h4>
+                <ul class="enlaces-pie info-contacto">
+                    <li>
+                        <svg class="icono-contacto-pie" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect width="20" height="16" x="2" y="4" rx="2" />
+                            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                        </svg>
+                        <span>lumikids@gmail.com</span>
+                    </li>
+                    <li>
+                        <svg class="icono-contacto-pie" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path
+                                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                        </svg>
+                        <span>+57 319 369 5398</span>
+                    </li>
+                    <li>
+                        <svg class="icono-contacto-pie" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                            <circle cx="12" cy="10" r="3" />
+                        </svg>
+                        <span>Medellín, Colombia</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Ilustración del Búho Footer -->
+            <div class="pie-buho-contenedor">
+                <img src="imagenes\image-removebg-preview.png" alt="Búho Lector" class="buho-footer">
+            </div>
+        </div>
+    </footer>
+
+    <!-- Archivo JS -->
+    <script src="pagina.js"></script>
+</body>
+
+</html>
