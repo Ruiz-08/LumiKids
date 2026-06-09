@@ -2,7 +2,8 @@
   "dependencies": {
     "aos": "^2.3.4",
     "gsap": "^3.15.0",
+    "interactjs": "^1.10.27",
     "pixi.js": "^8.19.0",
-    "react-pageflip": "^2.0.3"
+    "sweetalert2": "^11.26.25"
   }
 }
