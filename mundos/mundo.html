@@ -59,26 +59,39 @@
              CAMINO DORADO MÁGICO (SVG path)
         ─────────────────────────────────────────────────── -->
             <svg class="camino-svg" id="camino-svg" viewBox="0 0 1400 900" preserveAspectRatio="none">
-                <!-- Camino base (sombra) -->
+                <!-- Camino base (sombra con gradiente de mundos) -->
                 <path id="camino-sombra" class="camino-path-sombra"
                     d="M 252,342 Q 700,310 1148,342 Q 1220,450 1148,558 Q 960,710 700,738 Q 440,710 252,558 Q 180,450 252,342"
-                    fill="none" stroke="rgba(0,0,0,0.3)" stroke-width="28" stroke-linecap="round" />
+                    fill="none" stroke="url(#gradCaminoMagico)" stroke-width="12" stroke-linecap="round" />
                 <!-- Camino dorado -->
                 <path id="camino-dorado" class="camino-path"
                     d="M 252,342 Q 700,310 1148,342 Q 1220,450 1148,558 Q 960,710 700,738 Q 440,710 252,558 Q 180,450 252,342"
-                    fill="none" stroke="url(#gradCamino)" stroke-width="20" stroke-linecap="round"
+                    fill="none" stroke="url(#gradCamino)" stroke-width="8" stroke-linecap="round"
                     stroke-dasharray="2200" stroke-dashoffset="2200" />
-                <!-- Puntos de huellas doradas -->
+                <!-- Puntos de huellas doradas (fluyen en CSS) -->
                 <path id="camino-huellas" class="camino-huellas"
                     d="M 252,342 Q 700,310 1148,342 Q 1220,450 1148,558 Q 960,710 700,738 Q 440,710 252,558 Q 180,450 252,342"
-                    fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="6" stroke-linecap="round"
-                    stroke-dasharray="12 18" />
+                    fill="none" stroke="rgba(255, 225, 100, 0.9)" stroke-width="6" stroke-linecap="round"
+                    stroke-dasharray="0 26" />
+                <!-- Chispas/Estrellas blancas flotantes -->
+                <path id="camino-estrellas" class="camino-estrellas"
+                    d="M 252,342 Q 700,310 1148,342 Q 1220,450 1148,558 Q 960,710 700,738 Q 440,710 252,558 Q 180,450 252,342"
+                    fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round"
+                    stroke-dasharray="0 52" />
                 <defs>
                     <linearGradient id="gradCamino" x1="0%" y1="0%" x2="100%" y2="0%">
                         <stop offset="0%" style="stop-color:#ffd700;stop-opacity:1" />
                         <stop offset="40%" style="stop-color:#ffec6e;stop-opacity:1" />
                         <stop offset="70%" style="stop-color:#f4a800;stop-opacity:0.8" />
                         <stop offset="100%" style="stop-color:#c8860060;stop-opacity:0.4" />
+                    </linearGradient>
+                    <linearGradient id="gradCaminoMagico" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#2db34a;stop-opacity:0.9" />
+                        <stop offset="20%" style="stop-color:#f4791f;stop-opacity:0.9" />
+                        <stop offset="45%" style="stop-color:#5b9bf4;stop-opacity:0.9" />
+                        <stop offset="70%" style="stop-color:#c0392b;stop-opacity:0.9" />
+                        <stop offset="85%" style="stop-color:#ffd700;stop-opacity:0.9" />
+                        <stop offset="100%" style="stop-color:#2db34a;stop-opacity:0.9" />
                     </linearGradient>
                 </defs>
             </svg>
@@ -305,6 +318,7 @@
     </div>
 
     <!-- Scripts -->
+    <script src="../historias/bibliotecaData.js"></script>
     <script src="mundo.js"></script>
 </body>
 

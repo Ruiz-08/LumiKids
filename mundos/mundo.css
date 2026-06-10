@@ -208,12 +208,58 @@ body {
 }
 
 .camino-path {
-    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8));
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.9));
     transition: stroke-dashoffset 2s ease;
 }
 
 .camino-path-sombra {
-    filter: none;
+    opacity: 0.22;
+    filter: blur(2px) drop-shadow(0 0 8px rgba(255, 255, 255, 0.35));
+    animation: pulso-sombra-magica 4s infinite ease-in-out;
+}
+
+@keyframes pulso-sombra-magica {
+    0%, 100% {
+        opacity: 0.18;
+        filter: blur(2px) drop-shadow(0 0 6px rgba(255, 255, 255, 0.25));
+    }
+    50% {
+        opacity: 0.3;
+        filter: blur(3px) drop-shadow(0 0 12px rgba(255, 255, 255, 0.5));
+    }
+}
+
+.camino-huellas {
+    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.9));
+    animation: fluir-huellas 20s linear infinite, centelleo-huellas 3s infinite ease-in-out;
+}
+
+.camino-estrellas {
+    filter: drop-shadow(0 0 8px #ffffff);
+    animation: fluir-estrellas 10s linear infinite;
+}
+
+@keyframes fluir-huellas {
+    to {
+        stroke-dashoffset: -1000;
+    }
+}
+
+@keyframes fluir-estrellas {
+    to {
+        stroke-dashoffset: -1000;
+    }
+}
+
+@keyframes centelleo-huellas {
+    0%, 100% {
+        opacity: 0.8;
+        filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.7));
+    }
+    50% {
+        opacity: 1;
+        filter: drop-shadow(0 0 10px rgba(255, 215, 0, 1)) drop-shadow(0 0 15px #ffffff);
+    }
 }
 
 /* ============================================================
