@@ -156,13 +156,19 @@ function animarCamino() {
     const camino = document.getElementById('camino-dorado');
     if (!camino) return;
 
+    // Actualizar MUNDOS_DATA y los candados/progreso en el DOM basándose en los libros leídos
+    renderizarMundosDOM();
+
     const longitud = camino.getTotalLength ? camino.getTotalLength() : 2200;
     camino.style.strokeDasharray  = longitud;
     camino.style.strokeDashoffset = longitud;
 
+    const fraccionRuta = calcularPorcentajeRuta();
+    const targetOffset = longitud * (1.0 - fraccionRuta);
+
     if (typeof gsap !== 'undefined') {
         gsap.to(camino, {
-            strokeDashoffset: longitud * 0.89, // Recorrido hasta Bosque Encantado
+            strokeDashoffset: targetOffset,
             duration: 2.5,
             ease: 'power2.inOut',
             delay: 0.8
@@ -170,8 +176,168 @@ function animarCamino() {
     } else {
         camino.style.transition = 'stroke-dashoffset 2.5s ease 0.8s';
         setTimeout(() => {
-            camino.style.strokeDashoffset = longitud * 0.89;
+            camino.style.strokeDashoffset = targetOffset;
         }, 100);
+    }
+}
+
+/* ─── Renderizar y actualizar los mundos y candados según libros completados ─── */
+function renderizarMundosDOM() {
+    try {
+        const mundosKeys = ['bosque', 'pirata', 'letras', 'dragones', 'ciudad'];
+        let totalPiezasCompletadas = 0;
+        const biblioteca = window.LUMIKIDS_BIBLIOTECA;
+
+        // 1. Calcular total de piezas ganadas por el usuario leyendo libros de todos los mundos
+        if (biblioteca) {
+            mundosKeys.forEach(key => {
+                const libros = biblioteca[key]?.libros || [];
+                libros.forEach(lib => {
+                    if (localStorage.getItem(`lumikids_completed_${lib.id}`) === 'true') {
+                        totalPiezasCompletadas += lib.piezas;
+                    }
+                });
+            });
+        } else {
+            console.warn("LUMIKIDS_BIBLIOTECA no está disponible todavía, usando fallback de localStorage.");
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('lumikids_completed_') && localStorage.getItem(key) === 'true') {
+                    const bookId = key.replace('lumikids_completed_', '');
+                    if (bookId.startsWith('bosque_')) totalPiezasCompletadas += 4;
+                    else if (bookId.startsWith('pirata_')) totalPiezasCompletadas += 5;
+                    else if (bookId.startsWith('letras_')) totalPiezasCompletadas += 6;
+                    else if (bookId.startsWith('dragones_')) totalPiezasCompletadas += 7;
+                    else if (bookId.startsWith('ciudad_')) totalPiezasCompletadas += 8;
+                }
+            }
+        }
+
+        console.log("Total piezas completadas encontradas:", totalPiezasCompletadas);
+
+        // 2. Actualizar MUNDOS_DATA y elementos HTML de cada mundo
+        mundosKeys.forEach(key => {
+            const data = MUNDOS_DATA[key];
+            if (!data) return;
+
+            let librosLeidos = 0;
+            let piezasGanadas = 0;
+            let maxPiezasPosibles = 0;
+
+            if (biblioteca) {
+                const libros = biblioteca[key]?.libros || [];
+                const totalLibros = libros.length;
+                maxPiezasPosibles = libros.reduce((acc, lib) => acc + lib.piezas, 0);
+                libros.forEach(lib => {
+                    const completado = localStorage.getItem(`lumikids_completed_${lib.id}`) === 'true';
+                    if (completado) {
+                        librosLeidos++;
+                        piezasGanadas += lib.piezas;
+                    }
+                });
+                data.progreso = totalLibros > 0 ? Math.round((librosLeidos / totalLibros) * 100) : 0;
+                data.piezas = `${piezasGanadas}/${maxPiezasPosibles}`;
+                data.historias = totalLibros;
+            } else {
+                let count = 0;
+                for (let i = 0; i < localStorage.length; i++) {
+                    const lKey = localStorage.key(i);
+                    if (lKey && lKey.startsWith(`lumikids_completed_${key}_`) && localStorage.getItem(lKey) === 'true') {
+                        count++;
+                    }
+                }
+                const totalLibrosMundo = key === 'bosque' ? 6 : (key === 'pirata' ? 8 : (key === 'letras' ? 12 : (key === 'dragones' ? 15 : 20)));
+                const piezasPorLibro = key === 'bosque' ? 4 : (key === 'pirata' ? 5 : (key === 'letras' ? 6 : (key === 'dragones' ? 7 : 8)));
+                
+                data.progreso = Math.round((count / totalLibrosMundo) * 100);
+                data.piezas = `${count * piezasPorLibro}/${totalLibrosMundo * piezasPorLibro}`;
+            }
+
+            // Determinar estado de desbloqueo
+            let lockRequired = 0;
+            if (key === 'bosque') {
+                data.estado = 'activo';
+            } else {
+                lockRequired = key === 'pirata' ? 20 : (key === 'letras' ? 40 : (key === 'dragones' ? 70 : 100));
+                if (totalPiezasCompletadas >= lockRequired) {
+                    data.estado = 'activo';
+                } else {
+                    data.estado = 'bloqueado';
+                }
+            }
+
+            // Actualizar el DOM
+            const nodo = document.getElementById(`mundo-${key}`);
+            if (nodo) {
+                nodo.dataset.desbloqueado = data.estado === 'activo' ? 'true' : 'false';
+                const isla = nodo.querySelector('.mundo-isla');
+                if (isla) {
+                    if (data.estado === 'activo') {
+                        isla.classList.remove('bloqueado');
+                        const candado = isla.querySelector('.mundo-candado');
+                        if (candado) candado.remove();
+                    } else {
+                        isla.classList.add('bloqueado');
+                        if (!isla.querySelector('.mundo-candado')) {
+                            const candadoWrap = document.createElement('div');
+                            candadoWrap.className = 'mundo-candado';
+                            candadoWrap.innerHTML = '<div class="candado-icono">🔒</div>';
+                            const wrap = isla.querySelector('.mundo-imagen-wrap');
+                            if (wrap) wrap.appendChild(candadoWrap);
+                        }
+                    }
+                }
+            }
+        });
+
+        // 3. Sincronizar nivel y barra de XP del jugador en el HUD inferior
+        const bar = document.getElementById('barra-inferior');
+        if (bar) {
+            const xpText = bar.querySelector('.nav-perfil-xp-texto');
+            const xpRelleno = bar.querySelector('.nav-perfil-xp-relleno');
+            const levelBadge = bar.querySelector('.nav-perfil-nivel');
+            
+            if (xpText && xpRelleno && levelBadge) {
+                const level = 1 + Math.floor(totalPiezasCompletadas / 15);
+                levelBadge.textContent = `Nv.${level}`;
+                
+                const currentXP = (totalPiezasCompletadas * 50) % 1000;
+                xpText.textContent = `${currentXP} / 1000 XP`;
+                xpRelleno.style.width = `${(currentXP / 1000) * 100}%`;
+            }
+        }
+    } catch (error) {
+        console.error("Error en renderizarMundosDOM:", error);
+    }
+}
+
+/* ─── Calcular fracción de progreso del camino dorado (M 252,342 -> Loop) ─── */
+function calcularPorcentajeRuta() {
+    try {
+        const mundosKeys = ['bosque', 'pirata', 'letras', 'dragones', 'ciudad'];
+        const limites = [0.0, 0.38, 0.48, 0.70, 0.90, 1.0];
+        let pathFraction = 0.0;
+        
+        for (let i = 0; i < 5; i++) {
+            const key = mundosKeys[i];
+            const data = MUNDOS_DATA[key];
+            const progresoMundo = (data?.progreso || 0) / 100;
+            
+            const startVal = limites[i];
+            const endVal = limites[i + 1];
+            const segmentSize = endVal - startVal;
+            
+            if (progresoMundo < 1.0) {
+                pathFraction = startVal + (progresoMundo * segmentSize);
+                break;
+            } else {
+                pathFraction = endVal;
+            }
+        }
+        return pathFraction;
+    } catch (e) {
+        console.error("Error en calcularPorcentajeRuta:", e);
+        return 0.0;
     }
 }
 
