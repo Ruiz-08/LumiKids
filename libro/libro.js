@@ -58,6 +58,68 @@ document.addEventListener('DOMContentLoaded', () => {
     let flipBook    = null;
     let mundoActual = 'bosque';
 
+    // Helper: Verificar si un capítulo es un desafío
+    function esCapituloDesafio(capNum, totalCaps, piezasTotal) {
+        for (let i = 0; i < piezasTotal; i++) {
+            const capDesafio = Math.floor((i + 1) * totalCaps / piezasTotal);
+            if (capDesafio === capNum) return true;
+        }
+        return false;
+    }
+
+    // Helper: Obtener piezas obtenidas desde localStorage
+    function getPiezasObtenidas(libroId, piezasTotal) {
+        const key = `lumikids_puzzle_${libroId}`;
+        const status = JSON.parse(localStorage.getItem(key));
+        if (status && Array.isArray(status)) {
+            return status.filter(Boolean).length;
+        }
+        return 0;
+    }
+
+    // Helper: Abrir el overlay de juego para un capítulo
+    function abrirDesafioDeCapitulo(capNum) {
+        const d = datosHistorias[mundoActual];
+        if (!d) return;
+
+        // Extraer clave de mundo simple (ej. de bosque_1 a bosque)
+        const mundoKey = d.mundoKey || mundoActual.split('_')[0];
+
+        window.LUMIKIDS_JUEGOS.iniciarJuego(
+            mundoKey,
+            mundoActual,
+            capNum,
+            d.capitulos,
+            d,
+            function(completoTotal = false) {
+                // Actualizar interfaz tras completar
+                const box = document.getElementById(`desafio-box-${capNum}`);
+                if (box) {
+                    box.innerHTML = `<span style="display:inline-flex; align-items:center; gap:5px; color:#2ecc71; font-weight:600; font-size:12px; margin-top:15px;"><i class="bi bi-patch-check-fill"></i> ¡Desafío Resuelto!</span>`;
+                }
+
+                // Si todo el libro se completó (todos los desafíos listos), cerrar libro
+                if (completoTotal) {
+                    cerrarLibro();
+                    return;
+                }
+
+                // Quitar bloqueo visual de la flecha
+                if (btnFlotSig) {
+                    btnFlotSig.classList.remove('bloqueado-desafio');
+                    btnFlotSig.title = "Página siguiente";
+                }
+
+                // Pasar página automáticamente tras ganar
+                if (flipBook) {
+                    setTimeout(() => {
+                        flipBook.flipNext();
+                    }, 600);
+                }
+            }
+        );
+    }
+
     // ─── Inicializar St.PageFlip ──────────────────────────────────────────────
     function initFlipBook() {
         if (!flipbookEl) return;
@@ -92,9 +154,49 @@ document.addEventListener('DOMContentLoaded', () => {
             // Cargar todas las páginas del DOM dinámico recién creado
             flipBook.loadFromHTML(flipbookEl.querySelectorAll('.pagina-libro-flip'));
 
-            // Escuchar eventos de cambio de página
+            // Escuchar eventos de cambio de página e interceptar bloqueos por desafío
+            let isTransitioningForce = false;
             flipBook.on('flip', (e) => {
-                actualizarNavegacion(e.data);
+                if (isTransitioningForce) return;
+
+                const targetPage = e.data;
+                const currentPage = flipBook.getCurrentPageIndex();
+
+                // Interceptar avance de lectura
+                if (targetPage > currentPage) {
+                    // Si la página actual es una página par de historia (ej: 2, 4, 6)
+                    if (currentPage % 2 === 0 && currentPage >= 2) {
+                        const capNum = currentPage / 2;
+                        const d = datosHistorias[mundoActual];
+                        if (d) {
+                            const isChallenge = esCapituloDesafio(capNum, d.capitulos, d.piezasTotal);
+                            const solved = localStorage.getItem(`lumikids_challenge_solved_${mundoActual}_${capNum}`) === 'true';
+                            const bookCompleted = localStorage.getItem(`lumikids_completed_${mundoActual}`) === 'true';
+
+                            if (isChallenge && !solved && !bookCompleted) {
+                                // Desafío pendiente: Bloquear el paso y forzar regresar
+                                isTransitioningForce = true;
+                                flipBook.turnToPage(currentPage);
+                                isTransitioningForce = false;
+
+                                // Mostrar alerta amigable y abrir juego
+                                Swal.fire({
+                                    title: '¡Desafío pendiente!',
+                                    text: 'Primero debes resolver el desafío del capítulo para poder continuar la lectura.',
+                                    icon: 'warning',
+                                    confirmButtonText: '¡A jugar! 🧩',
+                                    confirmButtonColor: '#e67e22',
+                                    background: '#1e293b',
+                                    color: '#fff'
+                                }).then(() => {
+                                    abrirDesafioDeCapitulo(capNum);
+                                });
+                                return;
+                            }
+                        }
+                    }
+                }
+                actualizarNavegacion(targetPage);
             });
 
             flipBook.on('changeState', () => {
@@ -128,6 +230,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function cargarHistoriaEnDOM(libroId) {
         const d = datosHistorias[libroId];
         if (!d) return;
+
+        // Sincronizar dinámicamente el progreso de piezas obtenidas
+        d.piezasObtenidas = getPiezasObtenidas(libroId, d.piezasTotal);
 
         // 1. Destruir flipbook anterior si existe para evitar duplicados y liberar memoria
         if (flipBook) {
@@ -233,6 +338,19 @@ document.addEventListener('DOMContentLoaded', () => {
             const rightPage = document.createElement('div');
             rightPage.className = 'pagina-libro-flip';
             rightPage.dataset.density = 'soft';
+
+            const isChallenge = esCapituloDesafio(capNum, d.capitulos, d.piezasTotal);
+            const solved = localStorage.getItem(`lumikids_challenge_solved_${libroId}_${capNum}`) === 'true';
+            const bookCompleted = localStorage.getItem(`lumikids_completed_${libroId}`) === 'true';
+
+            const btnDesafioHTML = (isChallenge && !solved && !bookCompleted)
+                ? `<button class="libro-btn-desafio" data-cap-num="${capNum}">
+                     <i class="bi bi-puzzle-fill"></i> Resolver Desafío 🧩
+                   </button>`
+                : (isChallenge 
+                    ? `<span style="display:inline-flex; align-items:center; gap:5px; color:#2ecc71; font-weight:600; font-size:12px; margin-top:15px;"><i class="bi bi-patch-check-fill"></i> ¡Desafío Resuelto!</span>` 
+                    : '');
+
             rightPage.innerHTML = `
                 <div class="pagina-contenido">
                     <div class="capitulo-header">
@@ -249,6 +367,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             <strong class="dialogo-nombre">${cap.dialogo.nombre}</strong>
                             <p>${cap.dialogo.texto}</p>
                         </div>
+                    </div>
+                    <div class="desafio-contenedor-btn" id="desafio-box-${capNum}" style="text-align: center;">
+                        ${btnDesafioHTML}
                     </div>
                 </div>
             `;
@@ -323,6 +444,18 @@ document.addEventListener('DOMContentLoaded', () => {
         // 8. Inicializar la biblioteca PageFlip con el nuevo árbol HTML
         initFlipBook();
 
+        // Vincular clics de los botones de desafío inyectados
+        setTimeout(() => {
+            const btns = flipbookEl.querySelectorAll('.libro-btn-desafio');
+            btns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const num = parseInt(btn.getAttribute('data-cap-num'));
+                    abrirDesafioDeCapitulo(num);
+                });
+            });
+        }, 150);
+
         // 9. Forzar navegación inicial al inicio del libro
         if (flipBook) {
             try { flipBook.turnToPage(0); } catch (_) {}
@@ -373,9 +506,28 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // 4. Visibilidad de las flechas flotantes laterales
+        // 4. Visibilidad de las flechas flotantes laterales e indicador de bloqueo de desafío
+        let isLocked = false;
+        if (pageIdx % 2 === 0 && pageIdx >= 2) {
+            const capNum = pageIdx / 2;
+            const solved = localStorage.getItem(`lumikids_challenge_solved_${mundoActual}_${capNum}`) === 'true';
+            const bookCompleted = localStorage.getItem(`lumikids_completed_${mundoActual}`) === 'true';
+            if (esCapituloDesafio(capNum, d.capitulos, d.piezasTotal) && !solved && !bookCompleted) {
+                isLocked = true;
+            }
+        }
+
         if (btnFlotAnt) btnFlotAnt.style.opacity = pageIdx <= 0 ? '0' : '1';
-        if (btnFlotSig) btnFlotSig.style.opacity = pageIdx >= totalPages - 1 ? '0' : '1';
+        if (btnFlotSig) {
+            btnFlotSig.style.opacity = pageIdx >= totalPages - 1 ? '0' : '1';
+            if (isLocked) {
+                btnFlotSig.classList.add('bloqueado-desafio');
+                btnFlotSig.title = "Desafío pendiente 🧩";
+            } else {
+                btnFlotSig.classList.remove('bloqueado-desafio');
+                btnFlotSig.title = "Página siguiente";
+            }
+        }
     }
 
     // ─── Botones flotantes laterales ──────────────────────────────────────────
@@ -450,6 +602,8 @@ Cada sección/capítulo debe tener exactamente:
 - Un título de capítulo corto con emojis.
 - Un texto narrativo (con etiquetas HTML <p>...</p>).
 - Un diálogo corto de una frase expresada por "Lumi" relacionado con lo que ocurre en el capítulo.
+- Un objeto "preguntaComprension" que contenga una pregunta de comprensión lectora sobre el capítulo, un array de exactamente 3 "opciones", el índice de la opción "correcta" (0-indexed, o sea 0, 1 o 2) y una breve "explicacion" didáctica.
+- Un objeto "ahorcado" que contenga una "palabra" secreta en español en mayúsculas (de 4 a 10 letras, sin espacios ni tildes, relacionada con el capítulo, por ejemplo: MAPA, LLAVE, PUENTE, BOSQUE) y una "pista" para adivinarla.
 
 Debes responder ÚNICAMENTE en formato JSON con la siguiente estructura, sin bloques de código markdown, sin \`\`\`json ni texto adicional:
 {
@@ -462,6 +616,16 @@ Debes responder ÚNICAMENTE en formato JSON con la siguiente estructura, sin blo
       "dialogo": {
         "nombre": "Lumi",
         "texto": "Diálogo corto de Lumi con emojis"
+      },
+      "preguntaComprension": {
+        "pregunta": "¿Qué encontró Lumi en el bosque?",
+        "opciones": ["Una cueva", "Un mapa mágico", "Un cofre de oro"],
+        "correcta": 1,
+        "explicacion": "Lumi leyó el mapa mágico para orientarse en el bosque."
+      },
+      "ahorcado": {
+        "palabra": "MAPA",
+        "pista": "Dibujo o plano que sirve para orientarse en el camino."
       }
     }
   ]
@@ -500,7 +664,7 @@ Debes responder ÚNICAMENTE en formato JSON con la siguiente estructura, sin blo
                 capitulos: config.numCapitulos,
                 paginasTotales: config.paginasTotales,
                 piezasTotal: base.piezasTotal,
-                piezasObtenidas: base.piezasTotal,
+                piezasObtenidas: getPiezasObtenidas(libroId, base.piezasTotal),
                 imagen: base.imagen,
                 contenido: storyJson.contenido
             };
@@ -562,10 +726,32 @@ Debes responder ÚNICAMENTE en formato JSON con la siguiente estructura, sin blo
                     dialogoCap = `¡Lo logramos, Pixel! Descubrimos el secreto de "${base.titulo}". ¡Qué gran final! 🎉📚`;
                 }
                 
+                // Adjuntar preguntas de plantilla para el fallback rotando plantillas
+                const templates = window.LUMIKIDS_JUEGOS?.TEMPLATES_JUEGOS || [];
+                const tIdx = (i - 1) % (templates.length || 1);
+                const template = templates[tIdx] || {
+                    pregunta: "¿Qué herramientas utilizaron Lumi y Pixel para orientarse en este capítulo?",
+                    opciones: ["Un mapa mágico y la lectura", "Un teléfono celular", "Un silbato de madera"],
+                    correcta: 0,
+                    explicacion: "Lumi y Pixel usan el mapa mágico y la lectura atenta para encontrar el camino en sus aventuras.",
+                    ahorcadoPalabra: "MAPA",
+                    ahorcadoPista: "Es lo que Lumi y Pixel consultan para guiarse en el camino."
+                };
+
                 contenidoFallback.push({
                     tituloCapitulo: `${base.emojis} Capítulo ${i}: ${fase} ${base.emojis}`,
                     texto: textoCap,
-                    dialogo: { nombre: 'Lumi', texto: dialogoCap }
+                    dialogo: { nombre: 'Lumi', texto: dialogoCap },
+                    preguntaComprension: {
+                        pregunta: template.pregunta,
+                        opciones: template.opciones,
+                        correcta: template.correcta,
+                        explicacion: template.explicacion
+                    },
+                    ahorcado: {
+                        palabra: template.ahorcadoPalabra,
+                        pista: template.ahorcadoPista
+                    }
                 });
             }
 
@@ -577,7 +763,7 @@ Debes responder ÚNICAMENTE en formato JSON con la siguiente estructura, sin blo
                 capitulos: config.numCapitulos,
                 paginasTotales: config.paginasTotales,
                 piezasTotal: base.piezasTotal,
-                piezasObtenidas: base.piezasTotal,
+                piezasObtenidas: getPiezasObtenidas(libroId, base.piezasTotal),
                 imagen: base.imagen,
                 contenido: contenidoFallback
             };
