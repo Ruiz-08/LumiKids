@@ -93,6 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
     animarCamino();
     configurarInteraccionMundos();
     configurarZoomOverlay();
+    configurarRompecabezasOverlay();
     configurarDragScroll();
     centrarScrollEnLumi();
     
@@ -929,4 +930,199 @@ function centrarScrollEnLumi() {
             behavior: 'smooth'
         });
     }, 500); // Pequeño retraso para dar sensación de paneo inicial cinemático
+}
+
+/* ============================================================
+   OVERLAY ROMPECABEZAS (GALERÍA DE PUZZLES) — Funcionalidad
+   ============================================================ */
+function configurarRompecabezasOverlay() {
+    const navBtn = document.getElementById('nav-rompecabezas');
+    const overlay = document.getElementById('overlay-rompecabezas');
+    const closeBtn = document.getElementById('btn-cerrar-rompecabezas');
+    const filterBtns = document.querySelectorAll('.rompecabezas-filtros .filtro-btn');
+
+    if (!navBtn || !overlay || !closeBtn) return;
+
+    // Abrir overlay
+    navBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        overlay.classList.add('activo');
+        
+        // Cambiar activo en barra de navegación temporalmente
+        document.querySelectorAll('.barra-inferior .nav-item').forEach(btn => btn.classList.remove('activo'));
+        navBtn.classList.add('activo');
+        
+        // Renderizar por defecto el filtro activo
+        const activeFilterBtn = document.querySelector('.rompecabezas-filtros .filtro-btn.activo');
+        const activeFilter = activeFilterBtn ? activeFilterBtn.dataset.filtro : 'todos';
+        renderizarGaleriaRompecabezas(activeFilter);
+    });
+
+    // Cerrar overlay
+    const cerrar = () => {
+        overlay.classList.remove('activo');
+        // Restaurar botón activo de la barra inferior (Mundos)
+        navBtn.classList.remove('activo');
+        const activeNavMundos = document.getElementById('nav-mundos');
+        if (activeNavMundos) activeNavMundos.classList.add('activo');
+    };
+
+    closeBtn.addEventListener('click', cerrar);
+
+    // Soporte para cerrar con tecla ESC
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && overlay.classList.contains('activo')) {
+            cerrar();
+        }
+    });
+
+    // Cerrar al dar click fuera del contenedor
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            cerrar();
+        }
+    });
+
+    // Filtros de mundos
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterBtns.forEach(b => b.classList.remove('activo'));
+            btn.classList.add('activo');
+            renderizarGaleriaRompecabezas(btn.dataset.filtro);
+        });
+    });
+}
+
+function obtenerRutaImagen(imagenPath) {
+    if (!imagenPath) return '../historias/imagenes/zorrito_saludando.png';
+    if (imagenPath.startsWith('../')) {
+        return imagenPath;
+    }
+    return `../historias/${imagenPath}`;
+}
+
+function renderizarGaleriaRompecabezas(filtro) {
+    const gridEl = document.getElementById('rompecabezas-grid-libros');
+    if (!gridEl) return;
+
+    gridEl.innerHTML = '';
+    const biblioteca = window.LUMIKIDS_BIBLIOTECA;
+    if (!biblioteca) {
+        gridEl.innerHTML = '<div style="color: rgba(255,255,255,0.6); text-align: center; grid-column: 1/-1; padding: 40px;">No se pudo cargar la biblioteca de historias.</div>';
+        return;
+    }
+
+    const CONFIG_GRID_PUZZLE = {
+        4: { cols: 2, rows: 2 },
+        5: { cols: 3, rows: 2 },
+        6: { cols: 3, rows: 2 },
+        7: { cols: 4, rows: 2 },
+        8: { cols: 4, rows: 2 }
+    };
+
+    const mundosKeys = ['bosque', 'pirata', 'letras', 'dragones', 'ciudad'];
+    let countCards = 0;
+
+    mundosKeys.forEach(key => {
+        if (filtro !== 'todos' && key !== filtro) return;
+
+        const mundoData = biblioteca[key];
+        if (!mundoData) return;
+
+        const libros = mundoData.libros || [];
+        libros.forEach(libro => {
+            countCards++;
+            const keyPuzzle = `lumikids_puzzle_${libro.id}`;
+            const totalPiezas = libro.piezas || 4;
+            
+            // Consultar estado de piezas en localStorage
+            let puzzleStatus = JSON.parse(localStorage.getItem(keyPuzzle));
+            if (!puzzleStatus || !Array.isArray(puzzleStatus)) {
+                puzzleStatus = Array(totalPiezas).fill(false);
+            }
+            
+            const unlockedCount = puzzleStatus.filter(Boolean).length;
+            const percent = totalPiezas > 0 ? Math.round((unlockedCount / totalPiezas) * 100) : 0;
+            const isCompletado = unlockedCount === totalPiezas;
+
+            // Crear tarjeta
+            const item = document.createElement('div');
+            item.className = `tarjeta-puzzle-item ${isCompletado ? 'completada' : ''}`;
+            item.dataset.mundo = key;
+
+            // Generar piezas de previsualización
+            const gridConfig = CONFIG_GRID_PUZZLE[totalPiezas] || CONFIG_GRID_PUZZLE[4];
+            const cols = gridConfig.cols;
+            const rows = gridConfig.rows;
+            const puzzleWidth = 120;
+            const puzzleHeight = 160;
+            const w = puzzleWidth / cols;
+            const h = puzzleHeight / rows;
+
+            let boardHtml = `<div class="preview-tablero-puzzle" style="width: ${puzzleWidth}px; height: ${puzzleHeight}px;">`;
+            for (let i = 0; i < totalPiezas; i++) {
+                const isUnlocked = puzzleStatus[i] === true;
+                const col = i % cols;
+                const row = Math.floor(i / cols);
+                const left = col * w;
+                const top = row * h;
+
+                if (isUnlocked) {
+                    const imgUrl = obtenerRutaImagen(libro.imagen);
+                    boardHtml += `
+                        <div class="pieza-preview-item desbloqueada" style="
+                            background-image: url('${imgUrl}');
+                            background-size: ${puzzleWidth}px ${puzzleHeight}px;
+                            background-position: -${left}px -${top}px;
+                            width: ${w}px;
+                            height: ${h}px;
+                            left: ${left}px;
+                            top: ${top}px;
+                        "></div>`;
+                } else {
+                    boardHtml += `
+                        <div class="pieza-preview-item bloqueada" style="
+                            width: ${w}px;
+                            height: ${h}px;
+                            left: ${left}px;
+                            top: ${top}px;
+                        ">
+                            <i class="bi bi-lock-fill"></i>
+                        </div>`;
+                }
+            }
+            boardHtml += '</div>';
+
+            const nameMundo = key === 'bosque' ? 'Bosque Encantado' : 
+                             (key === 'pirata' ? 'Isla Pirata' : 
+                             (key === 'letras' ? 'Planeta Letras' : 
+                             (key === 'dragones' ? 'Reino Dragón' : 'Ciudad Dorada')));
+
+            item.innerHTML = `
+                <div class="tarjeta-puzzle-contenido">
+                    ${boardHtml}
+                    <div class="tarjeta-puzzle-info">
+                        <span class="tarjeta-puzzle-categoria">${nameMundo}</span>
+                        <h3 class="tarjeta-puzzle-titulo" title="${libro.titulo}">${libro.titulo}</h3>
+                        <div class="tarjeta-puzzle-meta">
+                            <span>Piezas: <strong>${unlockedCount} / ${totalPiezas}</strong></span>
+                            <span>${percent}%</span>
+                        </div>
+                        <div class="tarjeta-puzzle-progreso">
+                            <div class="tarjeta-puzzle-progreso-relleno" style="width: ${percent}%"></div>
+                        </div>
+                        ${isCompletado ? `
+                        <button class="tarjeta-puzzle-btn-armar" data-libro-id="${libro.id}" data-mundo="${key}" data-titulo="${libro.titulo}" data-imagen="${libro.imagen || ''}" data-piezas="${totalPiezas}" data-emoji="${MUNDOS_DATA[key]?.emoji || '🧩'}" data-mundo-nombre="${nameMundo}">
+                            🧩 Armar rompecabezas
+                        </button>` : ''}
+                    </div>
+                </div>
+            `;
+            gridEl.appendChild(item);
+        });
+    });
+
+    if (countCards === 0) {
+        gridEl.innerHTML = '<div style="color: rgba(255,255,255,0.6); text-align: center; grid-column: 1/-1; padding: 40px;">No hay rompecabezas en este mundo.</div>';
+    }
 }

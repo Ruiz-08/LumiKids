@@ -1122,3 +1122,79 @@
     50% { transform: rotateY(180deg); }
     100% { transform: rotateY(360deg); }
 }
+
+/* --- ESTADOS ACTIVOS DE BOTONES DE HERRAMIENTA --- */
+.libro-btn-herramienta.speaking {
+    background: linear-gradient(145deg, #ff4757, #ff6b81) !important;
+    border-color: #ff6b81 !important;
+    box-shadow: 0 0 15px rgba(255, 71, 87, 0.6) !important;
+    animation: pulsoAudio 1.5s infinite ease-in-out;
+}
+.libro-btn-herramienta.speaking svg {
+    stroke: #fff !important;
+}
+
+.libro-btn-herramienta.zoom-activo {
+    background: linear-gradient(145deg, #2d7a3a, #4caf50) !important;
+    border-color: #4caf50 !important;
+    box-shadow: 0 0 12px rgba(76, 175, 80, 0.5) !important;
+}
+.libro-btn-herramienta.zoom-activo svg {
+    stroke: #fff !important;
+}
+
+.libro-btn-herramienta.favorito {
+    background: linear-gradient(145deg, #ff9f43, #ee5253) !important;
+    border-color: #ff9f43 !important;
+    box-shadow: 0 0 12px rgba(238, 82, 83, 0.5) !important;
+}
+.libro-btn-herramienta.favorito svg {
+    stroke: #fff !important;
+    fill: #fff !important;
+}
+
+@keyframes pulsoAudio {
+    0%, 100% { box-shadow: 0 0 10px rgba(255, 71, 87, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(255, 71, 87, 0.8); }
+}
+
+/* --- AJUSTES DE ZOOM DE TEXTO EN EL LIBRO --- */
+.overlay-libro.zoom-grande .capitulo-texto {
+    font-size: 0.96rem !important;
+    line-height: 1.5 !important;
+}
+.overlay-libro.zoom-grande .dialogo-burbuja p {
+    font-size: 0.88rem !important;
+}
+.overlay-libro.zoom-grande .dialogo-nombre {
+    font-size: 0.88rem !important;
+}
+.overlay-libro.zoom-grande .info-lista {
+    font-size: 0.82rem !important;
+}
+.overlay-libro.zoom-grande .pagina-titulo-historia {
+    font-size: 1.55rem !important;
+}
+.overlay-libro.zoom-grande .capitulo-titulo {
+    font-size: 1.25rem !important;
+}
+
+.overlay-libro.zoom-gigante .capitulo-texto {
+    font-size: 1.12rem !important;
+    line-height: 1.55 !important;
+}
+.overlay-libro.zoom-gigante .dialogo-burbuja p {
+    font-size: 1.0rem !important;
+}
+.overlay-libro.zoom-gigante .dialogo-nombre {
+    font-size: 1.0rem !important;
+}
+.overlay-libro.zoom-gigante .info-lista {
+    font-size: 0.95rem !important;
+}
+.overlay-libro.zoom-gigante .pagina-titulo-historia {
+    font-size: 1.7rem !important;
+}
+.overlay-libro.zoom-gigante .capitulo-titulo {
+    font-size: 1.4rem !important;
+}

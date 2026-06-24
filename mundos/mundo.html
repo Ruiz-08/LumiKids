@@ -232,6 +232,10 @@
                 <div class="nav-item-icono">📚</div>
                 <span>Biblioteca</span>
             </a>
+            <a href="#" class="nav-item" id="nav-rompecabezas">
+                <div class="nav-item-icono">🧩</div>
+                <span>Puzzles</span>
+            </a>
             <a href="../paginaPrincipal/PaginaP.html#seccion-logros" class="nav-item" id="nav-desafios">
                 <div class="nav-item-icono">🏆</div>
                 <span>Desafíos</span>
@@ -317,9 +321,175 @@
         </div>
     </div>
 
+    <!-- ═══════════════════════════════════════════════════════
+     OVERLAY ROMPECABEZAS (GALERÍA DE PUZZLES)
+    ══════════════════════════════════════════════════════════ -->
+    <div class="overlay-rompecabezas" id="overlay-rompecabezas">
+        <div class="rompecabezas-contenedor">
+            <button class="rompecabezas-cerrar" id="btn-cerrar-rompecabezas" aria-label="Cerrar galería">×</button>
+            
+            <div class="rompecabezas-cabecera">
+                <span class="cabecera-emoji">🧩</span>
+                <h1 class="rompecabezas-titulo">Mis Rompecabezas</h1>
+                <p class="rompecabezas-subtitulo">Resuelve los acertijos dentro de las historias para ganar piezas y completar cada rompecabezas.</p>
+            </div>
+
+            <!-- Filtros de Mundos -->
+            <div class="rompecabezas-filtros" id="rompecabezas-filtros">
+                <button class="filtro-btn activo" data-filtro="todos">🌍 Todos</button>
+                <button class="filtro-btn" data-filtro="bosque">🌳 Bosque</button>
+                <button class="filtro-btn" data-filtro="pirata">🏴‍☠️ Pirata</button>
+                <button class="filtro-btn" data-filtro="letras">🚀 Letras</button>
+                <button class="filtro-btn" data-filtro="dragones">🐉 Dragones</button>
+                <button class="filtro-btn" data-filtro="ciudad">🏰 Ciudad</button>
+            </div>
+
+            <!-- Grid de Libros -->
+            <div class="rompecabezas-grid-libros" id="rompecabezas-grid-libros">
+                <!-- Se generará dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         MODAL: ARMAR ROMPECABEZAS (Juego interactivo v2)
+    ══════════════════════════════════════════════════════════ -->
+    <div class="puzzle-juego-overlay" id="puzzle-juego-overlay" aria-modal="true" role="dialog" aria-label="Armar rompecabezas">
+
+        <!-- Decoraciones de fondo -->
+        <div class="pj-bg-deco pj-deco-1">⭐</div>
+        <div class="pj-bg-deco pj-deco-2">🌟</div>
+        <div class="pj-bg-deco pj-deco-3">✨</div>
+        <div class="pj-bg-deco pj-deco-4">🧩</div>
+        <div class="pj-bg-deco pj-deco-5">💫</div>
+
+        <div class="puzzle-juego-modal" id="puzzle-juego-modal">
+
+            <!-- ── CABECERA ── -->
+            <div class="pj-cabecera">
+                <div class="pj-cab-izq">
+                    <div class="pj-cab-emoji-wrap">
+                        <span class="pj-cab-emoji" id="pj-cab-emoji">🧩</span>
+                        <div class="pj-cab-emoji-ring"></div>
+                    </div>
+                    <div class="pj-cab-textos">
+                        <span class="pj-cab-mundo" id="pj-cab-mundo">Mundo Mágico</span>
+                        <h2 class="pj-cab-titulo" id="pj-cab-titulo">Cargando...</h2>
+                    </div>
+                </div>
+
+                <div class="pj-cab-stats">
+                    <div class="pj-stat-chip pj-chip-piezas">
+                        <span class="pj-chip-icon">🧩</span>
+                        <span id="pj-piezas-restantes">— piezas</span>
+                    </div>
+                    <div class="pj-stat-chip pj-chip-tiempo">
+                        <span class="pj-chip-icon">⏱️</span>
+                        <span id="pj-cronometro">00:00</span>
+                    </div>
+                </div>
+
+                <div class="pj-cab-acciones">
+                    <button class="pj-btn-mezclar" id="pj-btn-mezclar">
+                        🔀 Mezclar
+                    </button>
+                    <button class="pj-btn-pista" id="pj-btn-pista">
+                        💡 Pista
+                    </button>
+                    <button class="pj-btn-ver-imagen" id="pj-btn-ver-imagen">
+                        👁️ Ver imagen
+                    </button>
+                    <button class="pj-btn-cerrar" id="pj-btn-cerrar" aria-label="Cerrar">✕</button>
+                </div>
+            </div>
+
+            <!-- ── INSTRUCCIÓN ANIMADA ── -->
+            <div class="pj-instruccion">
+                <span class="pj-instruccion-icono">🎮</span>
+                <span>¡Arrastra y encaja la pieza en su lugar correspondiente del tablero!</span>
+                <span class="pj-instruccion-icono">🌟</span>
+            </div>
+
+            <!-- ── ÁREA DE JUEGO ── -->
+            <div class="pj-area-juego">
+
+                <!-- TABLERO -->
+                <div class="pj-tablero-seccion">
+                    <div class="pj-seccion-titulo">
+                        <span class="pj-seccion-badge pj-badge-tablero">📋 Tablero</span>
+                    </div>
+                    <div class="pj-tablero-marco">
+                        <div class="pj-tablero" id="pj-tablero"></div>
+                        <div class="pj-tablero-referencia" id="pj-tablero-referencia"></div>
+                    </div>
+                </div>
+
+                <!-- FLECHA CENTRAL -->
+                <div class="pj-flecha-central">
+                    <div class="pj-flecha-linea"></div>
+                    <div class="pj-flecha-icono">🎯</div>
+                    <div class="pj-flecha-linea"></div>
+                </div>
+
+                <!-- BANDEJA DE PIEZAS -->
+                <div class="pj-bandeja-seccion">
+                    <div class="pj-seccion-titulo">
+                        <span class="pj-seccion-badge pj-badge-bandeja">🎒 Tus piezas</span>
+                    </div>
+                    <div class="pj-bandeja-marco">
+                        <div class="pj-bandeja" id="pj-bandeja"></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ── PIE: PROGRESO ── -->
+            <div class="pj-pie">
+                <div class="pj-progreso-contenedor">
+                    <div class="pj-progreso-estrellas" id="pj-progreso-estrellas">
+                        ☆☆☆☆☆
+                    </div>
+                    <div class="pj-progreso-barra-fondo">
+                        <div class="pj-progreso-barra-llena" id="pj-progreso-barra" style="width:0%">
+                            <div class="pj-progreso-brillo"></div>
+                        </div>
+                    </div>
+                    <span class="pj-progreso-texto" id="pj-progreso-texto">¡Empieza a armar tu rompecabezas!</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ── PANEL DE VICTORIA ── -->
+        <div class="pj-victoria" id="pj-victoria" style="display:none;">
+            <div class="pj-victoria-contenido">
+                <div class="pj-victoria-estrellas">⭐⭐⭐</div>
+                <div class="pj-victoria-emoji">🏆</div>
+                <h2 class="pj-victoria-titulo">¡Rompecabezas Completado!</h2>
+                <p class="pj-victoria-sub" id="pj-victoria-sub">¡Lo armaste!</p>
+                <div class="pj-victoria-imagen-wrap" id="pj-victoria-imagen-wrap"></div>
+                <div class="pj-victoria-btns">
+                    <button class="pj-btn-jugar-otro" id="pj-btn-jugar-otro">
+                        🎒 Ver mis rompecabezas
+                    </button>
+                    <button class="pj-btn-revolver" id="pj-btn-revolver">
+                        🔄 Armar de nuevo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenedor del Juego de Rompecabezas React -->
+    <div id="react-puzzle-overlay" style="position: fixed; inset: 0; z-index: 99999; display: none; background: rgba(5,10,30,0.95); align-items: center; justify-content: center;">
+        <div id="react-puzzle-root" class="w-full flex justify-center"></div>
+    </div>
+
     <!-- Scripts -->
     <script src="../historias/bibliotecaData.js"></script>
     <script src="mundo.js"></script>
+    <script type="module" src="../puzzle-react/dist/assets/puzzle-game.js"></script>
+    <script src="puzzle-juego.js"></script>
 </body>
 
 </html>

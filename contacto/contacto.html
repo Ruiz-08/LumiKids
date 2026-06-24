@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto — LUMIKIDS</title>
+    <meta name="description" content="Comunícate con LumiKids: escríbenos un correo, chatea por WhatsApp o encuéntranos en Medellín, Colombia.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="contacto.css">
+</head>
+
+<body>
+
+    <!-- ══════════════════════════════════════════
+         HEADER
+    ══════════════════════════════════════════ -->
+    <header class="ct-header">
+        <div class="ct-header-inner">
+            <a href="../paginaPrincipal/PaginaP.html" class="ct-logo">
+                <span class="ct-logo-lumi">LUMI</span><span class="ct-logo-kids">KIDS</span>
+            </a>
+
+            <nav class="ct-nav">
+                <a href="../paginaPrincipal/PaginaP.html" class="ct-nav-link">
+                    <i class="bi bi-house-fill"></i> Inicio
+                </a>
+                <a href="../historias/historia.html" class="ct-nav-link">
+                    <i class="bi bi-book-fill"></i> Historias
+                </a>
+                <a href="../mundos/mundo.html" class="ct-nav-link">
+                    <i class="bi bi-globe2"></i> Mundos
+                </a>
+                <a href="../padres/padres.html" class="ct-nav-link">
+                    <i class="bi bi-people-fill"></i> Padres
+                </a>
+                <a href="contacto.html" class="ct-nav-link activo">
+                    <i class="bi bi-envelope-fill"></i> Contacto
+                </a>
+            </nav>
+
+            <a href="../paginaPrincipal/PaginaP.html" class="ct-btn-volver">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+        </div>
+    </header>
+
+    <!-- ══════════════════════════════════════════
+         HERO BANNER
+    ══════════════════════════════════════════ -->
+    <section class="ct-hero">
+        <div class="ct-hero-burbuja ct-burbuja-1"></div>
+        <div class="ct-hero-burbuja ct-burbuja-2"></div>
+        <div class="ct-hero-burbuja ct-burbuja-3"></div>
+        <div class="ct-hero-contenido">
+            <div class="ct-hero-icono">
+                <i class="bi bi-chat-heart-fill"></i>
+            </div>
+            <h1 class="ct-hero-titulo">¡Estamos aquí para ti!</h1>
+            <p class="ct-hero-sub">
+                ¿Tienes dudas, sugerencias o simplemente quieres saludar?<br>
+                Elige la forma que más te guste para escribirnos.
+            </p>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         CHIPS DE ACCESO RÁPIDO
+    ══════════════════════════════════════════ -->
+    <div class="ct-chips-barra">
+        <a href="#seccion-correo" class="ct-chip azul">
+            <i class="bi bi-envelope-fill"></i> Correo electrónico
+        </a>
+        <a href="#seccion-whatsapp" class="ct-chip verde">
+            <i class="bi bi-whatsapp"></i> WhatsApp
+        </a>
+        <a href="#seccion-mapa" class="ct-chip naranja">
+            <i class="bi bi-geo-alt-fill"></i> Ubicación
+        </a>
+        <a href="#seccion-info" class="ct-chip morado">
+            <i class="bi bi-info-circle-fill"></i> Información
+        </a>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         CUERPO PRINCIPAL
+    ══════════════════════════════════════════ -->
+    <main class="ct-main">
+
+        <!-- ── COLUMNA IZQUIERDA ── -->
+        <div class="ct-col-izq">
+
+            <!-- FORMULARIO DE CORREO -->
+            <section class="ct-tarjeta" id="seccion-correo">
+                <div class="ct-tarjeta-cab">
+                    <div class="ct-cab-grupo">
+                        <div class="ct-cab-icono azul">
+                            <i class="bi bi-envelope-fill"></i>
+                        </div>
+                        <div>
+                            <h2 class="ct-tarjeta-titulo">Envíanos un mensaje</h2>
+                            <p class="ct-tarjeta-sub">Te respondemos en menos de 24 horas.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form class="ct-form" id="formulario-contacto" novalidate>
+                    <div class="ct-form-fila">
+                        <div class="ct-campo">
+                            <label for="ct-nombre" class="ct-label">
+                                <i class="bi bi-person-fill"></i> Nombre completo
+                            </label>
+                            <input type="text" id="ct-nombre" class="ct-input" placeholder="Ej. María García" required>
+                            <span class="ct-error" id="err-nombre"></span>
+                        </div>
+                        <div class="ct-campo">
+                            <label for="ct-correo" class="ct-label">
+                                <i class="bi bi-envelope-fill"></i> Correo electrónico
+                            </label>
+                            <input type="email" id="ct-correo" class="ct-input" placeholder="tucorreo@email.com" required>
+                            <span class="ct-error" id="err-correo"></span>
+                        </div>
+                    </div>
+
+                    <div class="ct-campo">
+                        <label for="ct-asunto" class="ct-label">
+                            <i class="bi bi-tag-fill"></i> Asunto
+                        </label>
+                        <div class="ct-select-wrap">
+                            <select id="ct-asunto" class="ct-input ct-select" required>
+                                <option value="" disabled selected>Selecciona un tema…</option>
+                                <option value="soporte">Soporte técnico</option>
+                                <option value="cuenta">Problema con mi cuenta</option>
+                                <option value="sugerencia">Sugerencia o idea</option>
+                                <option value="colaboracion">Colaboración / Alianzas</option>
+                                <option value="prensa">Prensa / Medios</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                            <i class="bi bi-chevron-down ct-select-ico"></i>
+                        </div>
+                        <span class="ct-error" id="err-asunto"></span>
+                    </div>
+
+                    <div class="ct-campo">
+                        <label for="ct-mensaje" class="ct-label">
+                            <i class="bi bi-chat-text-fill"></i> Mensaje
+                        </label>
+                        <textarea id="ct-mensaje" class="ct-input ct-textarea" rows="5"
+                            placeholder="Escribe aquí tu mensaje…" required></textarea>
+                        <div class="ct-contador-wrap">
+                            <span class="ct-error" id="err-mensaje"></span>
+                            <span class="ct-contador" id="ct-contador">0 / 500</span>
+                        </div>
+                    </div>
+
+                    <!-- Checkbox privacidad -->
+                    <label class="ct-check-label" for="ct-privacidad">
+                        <input type="checkbox" id="ct-privacidad" class="ct-checkbox" required>
+                        <span class="ct-check-box"></span>
+                        <span class="ct-check-texto">
+                            Acepto la <a href="#" class="ct-link">política de privacidad</a> y el tratamiento de mis datos personales.
+                        </span>
+                    </label>
+                    <span class="ct-error" id="err-privacidad"></span>
+
+                    <button type="submit" class="ct-btn-enviar" id="btn-enviar-correo">
+                        <i class="bi bi-send-fill"></i>
+                        <span>Enviar mensaje</span>
+                        <div class="ct-btn-ripple"></div>
+                    </button>
+                </form>
+
+                <!-- Estado de éxito -->
+                <div class="ct-exito" id="ct-exito" style="display:none;">
+                    <div class="ct-exito-icono">✅</div>
+                    <h3>¡Mensaje enviado!</h3>
+                    <p>Gracias por escribirnos. Te responderemos a <strong id="correo-confirmado"></strong> muy pronto.</p>
+                    <button class="ct-btn-otro" id="btn-otro-mensaje">Enviar otro mensaje</button>
+                </div>
+            </section>
+
+            <!-- MAPA DE UBICACIÓN -->
+            <section class="ct-tarjeta" id="seccion-mapa">
+                <div class="ct-tarjeta-cab">
+                    <div class="ct-cab-grupo">
+                        <div class="ct-cab-icono naranja">
+                            <i class="bi bi-geo-alt-fill"></i>
+                        </div>
+                        <div>
+                            <h2 class="ct-tarjeta-titulo">Nuestra ubicación</h2>
+                            <p class="ct-tarjeta-sub">Medellín, Antioquia — Colombia</p>
+                        </div>
+                    </div>
+                    <a href="https://maps.google.com/?q=Medellín,+Antioquia,+Colombia"
+                        target="_blank" rel="noopener" class="ct-btn-maps">
+                        <i class="bi bi-box-arrow-up-right"></i> Abrir en Maps
+                    </a>
+                </div>
+
+                <!-- Mapa iframe de Google Maps -->
+                <div class="ct-mapa-wrap">
+                    <iframe
+                        id="ct-mapa-iframe"
+                        class="ct-mapa-iframe"
+                        title="Ubicación LumiKids en Medellín"
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d254508.27726802796!2d-75.72609629999999!3d6.2442188!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8468b1b0c32a5b91%3A0xc69e5ef75e8e6e0a!2sMedell%C3%ADn%2C+Antioquia!5e0!3m2!1ses!2sco!4v1718000000000!5m2!1ses!2sco"
+                        allowfullscreen
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                    <div class="ct-mapa-overlay" id="ct-mapa-overlay">
+                        <button class="ct-btn-activar-mapa" id="btn-activar-mapa">
+                            <i class="bi bi-geo-alt-fill"></i>
+                            Hacer clic para activar el mapa
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Dirección detallada -->
+                <div class="ct-direccion-info">
+                    <div class="ct-dir-item">
+                        <i class="bi bi-geo-fill"></i>
+                        <span>Medellín, Antioquia, Colombia</span>
+                    </div>
+                    <div class="ct-dir-item">
+                        <i class="bi bi-clock-fill"></i>
+                        <span>Atención: Lunes a Viernes, 8:00 am – 6:00 pm</span>
+                    </div>
+                    <div class="ct-dir-item">
+                        <i class="bi bi-translate"></i>
+                        <span>Atendemos en español</span>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- ── COLUMNA DERECHA ── -->
+        <div class="ct-col-der">
+
+            <!-- WHATSAPP -->
+            <section class="ct-tarjeta ct-tarjeta-whatsapp" id="seccion-whatsapp">
+                <div class="ct-wa-fondo">
+                    <div class="ct-wa-burbuja b1"></div>
+                    <div class="ct-wa-burbuja b2"></div>
+                </div>
+                <div class="ct-wa-contenido">
+                    <div class="ct-wa-icono">
+                        <i class="bi bi-whatsapp"></i>
+                    </div>
+                    <h2 class="ct-wa-titulo">Chat por WhatsApp</h2>
+                    <p class="ct-wa-sub">
+                        La forma más rápida de hablar con nosotros.<br>
+                        ¡Respondemos en minutos!
+                    </p>
+
+                    <div class="ct-wa-numero">
+                        <span class="ct-wa-bandera">🇨🇴</span>
+                        <span class="ct-wa-tel">+57 319 369 5398</span>
+                    </div>
+
+                    <!-- Burbuja de chat simulada -->
+                    <div class="ct-wa-preview">
+                        <div class="ct-burbuja-chat">
+                            <span class="ct-burbuja-texto">¡Hola! 👋 Bienvenido a LumiKids. ¿En qué podemos ayudarte hoy?</span>
+                            <span class="ct-burbuja-hora">Ahora</span>
+                        </div>
+                    </div>
+
+                    <a href="https://wa.me/573193695398?text=Hola%20LumiKids%2C%20me%20gustar%C3%ADa%20obtener%20m%C3%A1s%20informaci%C3%B3n%20sobre%20la%20plataforma."
+                        target="_blank" rel="noopener" class="ct-btn-whatsapp" id="btn-whatsapp">
+                        <i class="bi bi-whatsapp"></i>
+                        Iniciar conversación
+                    </a>
+                    <p class="ct-wa-nota">
+                        <i class="bi bi-shield-check-fill"></i>
+                        Tus datos están protegidos
+                    </p>
+                </div>
+            </section>
+
+            <!-- INFORMACIÓN DE CONTACTO -->
+            <section class="ct-tarjeta" id="seccion-info">
+                <div class="ct-tarjeta-cab">
+                    <div class="ct-cab-grupo">
+                        <div class="ct-cab-icono morado">
+                            <i class="bi bi-info-circle-fill"></i>
+                        </div>
+                        <div>
+                            <h2 class="ct-tarjeta-titulo">Información de contacto</h2>
+                            <p class="ct-tarjeta-sub">Datos directos para comunicarte con nosotros.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ct-info-lista">
+
+                    <div class="ct-info-item">
+                        <div class="ct-info-icono azul">
+                            <i class="bi bi-envelope-fill"></i>
+                        </div>
+                        <div class="ct-info-datos">
+                            <span class="ct-info-etiqueta">Correo electrónico</span>
+                            <a href="mailto:lumikids@gmail.com" class="ct-info-valor">lumikids@gmail.com</a>
+                        </div>
+                        <button class="ct-btn-copiar" data-valor="lumikids@gmail.com" title="Copiar correo">
+                            <i class="bi bi-copy"></i>
+                        </button>
+                    </div>
+
+                    <div class="ct-info-item">
+                        <div class="ct-info-icono verde">
+                            <i class="bi bi-whatsapp"></i>
+                        </div>
+                        <div class="ct-info-datos">
+                            <span class="ct-info-etiqueta">WhatsApp</span>
+                            <a href="https://wa.me/573193695398" target="_blank" rel="noopener" class="ct-info-valor">+57 319 369 5398</a>
+                        </div>
+                        <button class="ct-btn-copiar" data-valor="+57 319 369 5398" title="Copiar número">
+                            <i class="bi bi-copy"></i>
+                        </button>
+                    </div>
+
+                    <div class="ct-info-item">
+                        <div class="ct-info-icono naranja">
+                            <i class="bi bi-geo-alt-fill"></i>
+                        </div>
+                        <div class="ct-info-datos">
+                            <span class="ct-info-etiqueta">Ubicación</span>
+                            <a href="https://maps.google.com/?q=Medellín,+Colombia" target="_blank" rel="noopener" class="ct-info-valor">Medellín, Colombia</a>
+                        </div>
+                        <button class="ct-btn-copiar" data-valor="Medellín, Antioquia, Colombia" title="Copiar dirección">
+                            <i class="bi bi-copy"></i>
+                        </button>
+                    </div>
+
+                    <div class="ct-info-item">
+                        <div class="ct-info-icono morado">
+                            <i class="bi bi-clock-fill"></i>
+                        </div>
+                        <div class="ct-info-datos">
+                            <span class="ct-info-etiqueta">Horario de atención</span>
+                            <span class="ct-info-valor">Lun – Vie · 8:00 am – 6:00 pm</span>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- FAQ RÁPIDO -->
+            <section class="ct-tarjeta">
+                <div class="ct-tarjeta-cab">
+                    <div class="ct-cab-grupo">
+                        <div class="ct-cab-icono amarillo">
+                            <i class="bi bi-question-circle-fill"></i>
+                        </div>
+                        <div>
+                            <h2 class="ct-tarjeta-titulo">Preguntas frecuentes</h2>
+                            <p class="ct-tarjeta-sub">Respuestas rápidas a las dudas más comunes.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ct-faq-lista" id="faq-lista">
+
+                    <div class="ct-faq-item">
+                        <button class="ct-faq-pregunta" aria-expanded="false">
+                            <span>¿LumiKids es gratuito?</span>
+                            <i class="bi bi-chevron-down ct-faq-ico"></i>
+                        </button>
+                        <div class="ct-faq-respuesta">
+                            <p>LumiKids ofrece contenido gratuito y una versión premium con acceso completo a todos los mundos, historias y reportes para padres.</p>
+                        </div>
+                    </div>
+
+                    <div class="ct-faq-item">
+                        <button class="ct-faq-pregunta" aria-expanded="false">
+                            <span>¿Para qué edades está diseñado?</span>
+                            <i class="bi bi-chevron-down ct-faq-ico"></i>
+                        </button>
+                        <div class="ct-faq-respuesta">
+                            <p>LumiKids está diseñado para niños entre 5 y 12 años, con contenido adaptado a diferentes niveles de lectura y dificultad.</p>
+                        </div>
+                    </div>
+
+                    <div class="ct-faq-item">
+                        <button class="ct-faq-pregunta" aria-expanded="false">
+                            <span>¿Cómo puedo recuperar mi contraseña?</span>
+                            <i class="bi bi-chevron-down ct-faq-ico"></i>
+                        </button>
+                        <div class="ct-faq-respuesta">
+                            <p>Puedes solicitar un restablecimiento de contraseña desde la pantalla de inicio de sesión o escribirnos directamente al correo de soporte.</p>
+                        </div>
+                    </div>
+
+                    <div class="ct-faq-item">
+                        <button class="ct-faq-pregunta" aria-expanded="false">
+                            <span>¿Hay app móvil disponible?</span>
+                            <i class="bi bi-chevron-down ct-faq-ico"></i>
+                        </button>
+                        <div class="ct-faq-respuesta">
+                            <p>Actualmente LumiKids funciona como plataforma web optimizada para móvil. ¡La app nativa está en desarrollo y pronto estará disponible!</p>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+        </div>
+
+    </main>
+
+    <!-- ══════════════════════════════════════════
+         FOOTER
+    ══════════════════════════════════════════ -->
+    <footer class="ct-footer">
+        <div class="ct-footer-inner">
+            <a href="../paginaPrincipal/PaginaP.html" class="ct-logo">
+                <span class="ct-logo-lumi">LUMI</span><span class="ct-logo-kids">KIDS</span>
+            </a>
+            <span class="ct-footer-sep">·</span>
+            <span>© 2026 LumiKids. Todos los derechos reservados.</span>
+        </div>
+    </footer>
+
+    <!-- Toast de copiado -->
+    <div class="ct-toast" id="ct-toast">
+        <i class="bi bi-check2-circle"></i> ¡Copiado al portapapeles!
+    </div>
+
+    <script src="contacto.js"></script>
+</body>
+
+</html>

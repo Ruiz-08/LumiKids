@@ -17,6 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const barraProgCap = document.getElementById('progreso-capitulo');
     const estrellasBar = document.getElementById('progreso-estrellas-bar');
 
+    // Botones de herramientas del lector
+    const btnEscuchar = document.getElementById('btn-escuchar-historia');
+    const btnAumentarTexto = document.getElementById('btn-aumentar-texto');
+    const btnFavoritos = document.getElementById('btn-favoritos');
+
     // ─── Configuración de mundos (Páginas, Capítulos y Complejidad) ───
     const CONFIG_MUNDOS_LIBRO = {
         bosque: {
@@ -162,6 +167,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const targetPage = e.data;
                 const currentPage = flipBook.getCurrentPageIndex();
 
+                // Detener audio al cambiar de página
+                if (window.speechSynthesis && window.speechSynthesis.speaking) {
+                    window.speechSynthesis.cancel();
+                    resetBotonAudio();
+                }
+
                 // Interceptar avance de lectura
                 if (targetPage > currentPage) {
                     // Si la página actual es una página par de historia (ej: 2, 4, 6)
@@ -233,6 +244,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Sincronizar dinámicamente el progreso de piezas obtenidas
         d.piezasObtenidas = getPiezasObtenidas(libroId, d.piezasTotal);
+
+        // Inicializar estado del botón de favoritos
+        if (btnFavoritos) {
+            const favoritos = JSON.parse(localStorage.getItem('lumikids_favoritos') || '[]');
+            if (favoritos.includes(libroId)) {
+                btnFavoritos.classList.add('favorito');
+                btnFavoritos.querySelector('span').textContent = 'Favorito';
+            } else {
+                btnFavoritos.classList.remove('favorito');
+                btnFavoritos.querySelector('span').textContent = 'Favoritos';
+            }
+        }
 
         // 1. Destruir flipbook anterior si existe para evitar duplicados y liberar memoria
         if (flipBook) {
@@ -542,6 +565,140 @@ document.addEventListener('DOMContentLoaded', () => {
     // ─── Botón Volver en la barra superior ───────────────────────────────────
     btnVolver?.addEventListener('click', () => cerrarLibro());
 
+    // ─── Herramientas: Escuchar historia ─────────────────────────────────────
+    let currentUtterance = null;
+
+    function resetBotonAudio() {
+        if (btnEscuchar) {
+            btnEscuchar.classList.remove('speaking');
+            btnEscuchar.querySelector('span').textContent = 'Escuchar historia';
+        }
+    }
+
+    function obtenerTextoDePaginaActual() {
+        if (!mundoActual) return '';
+        const d = datosHistorias[mundoActual];
+        if (!d) return '';
+
+        const pageIdx = flipBook ? flipBook.getCurrentPageIndex() : 0;
+        const totalPages = d.paginasTotales;
+
+        if (pageIdx === 0) {
+            return `${d.titulo}. Libro mágico del mundo ${d.mundo}.`;
+        } else if (pageIdx >= totalPages - 2) {
+            return `¡Felicidades! Has completado con éxito la historia de este mundo mágico con Lumi y Pixel. Sigue explorando otros mundos para encontrar nuevas piezas mágicas.`;
+        } else {
+            const capNum = Math.ceil(pageIdx / 2);
+            if (capNum >= 1 && capNum <= d.contenido.length) {
+                const cap = d.contenido[capNum - 1];
+                const cleanText = cap.texto ? cap.texto.replace(/<\/?[^>]+(>|$)/g, "") : "";
+                return `${cap.tituloCapitulo}. ${cleanText}. Lumi dice: ${cap.dialogo.texto}`;
+            }
+        }
+        return '';
+    }
+
+    btnEscuchar?.addEventListener('click', () => {
+        if (!window.speechSynthesis) {
+            Swal.fire({
+                title: 'No soportado',
+                text: 'La síntesis de voz no está soportada en este navegador.',
+                icon: 'error',
+                background: '#1e293b',
+                color: '#fff'
+            });
+            return;
+        }
+
+        if (window.speechSynthesis.speaking) {
+            window.speechSynthesis.cancel();
+            resetBotonAudio();
+            return;
+        }
+
+        const texto = obtenerTextoDePaginaActual();
+        if (!texto) return;
+
+        currentUtterance = new SpeechSynthesisUtterance(texto);
+        currentUtterance.lang = 'es-ES';
+
+        // Intentar seleccionar voz en español
+        const voices = window.speechSynthesis.getVoices();
+        const voiceEs = voices.find(v => v.lang.startsWith('es'));
+        if (voiceEs) currentUtterance.voice = voiceEs;
+
+        currentUtterance.onend = () => resetBotonAudio();
+        currentUtterance.onerror = () => resetBotonAudio();
+
+        btnEscuchar.classList.add('speaking');
+        btnEscuchar.querySelector('span').textContent = 'Detener audio';
+
+        window.speechSynthesis.speak(currentUtterance);
+    });
+
+    // ─── Herramientas: Aumentar texto ────────────────────────────────────────
+    let zoomLevel = 0; // 0: Normal, 1: Grande, 2: Gigante
+    btnAumentarTexto?.addEventListener('click', () => {
+        zoomLevel = (zoomLevel + 1) % 3;
+        overlay.classList.remove('zoom-grande', 'zoom-gigante');
+        btnAumentarTexto.classList.remove('zoom-activo');
+        
+        const span = btnAumentarTexto.querySelector('span');
+        if (zoomLevel === 1) {
+            overlay.classList.add('zoom-grande');
+            btnAumentarTexto.classList.add('zoom-activo');
+            span.textContent = 'Texto: Mediano';
+        } else if (zoomLevel === 2) {
+            overlay.classList.add('zoom-gigante');
+            btnAumentarTexto.classList.add('zoom-activo');
+            span.textContent = 'Texto: Grande';
+        } else {
+            span.textContent = 'Aumentar texto';
+        }
+    });
+
+    // ─── Herramientas: Favoritos ─────────────────────────────────────────────
+    btnFavoritos?.addEventListener('click', () => {
+        if (!mundoActual) return;
+        let favoritos = JSON.parse(localStorage.getItem('lumikids_favoritos') || '[]');
+        const idx = favoritos.indexOf(mundoActual);
+        
+        if (idx > -1) {
+            favoritos.splice(idx, 1);
+            btnFavoritos.classList.remove('favorito');
+            btnFavoritos.querySelector('span').textContent = 'Favoritos';
+            
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: 'Quitado de favoritos',
+                showConfirmButton: false,
+                timer: 2000,
+                background: '#1e293b',
+                color: '#fff'
+            });
+        } else {
+            favoritos.push(mundoActual);
+            btnFavoritos.classList.add('favorito');
+            btnFavoritos.querySelector('span').textContent = 'Favorito';
+            
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: '¡Añadido a favoritos! ❤️',
+                showConfirmButton: false,
+                timer: 2000,
+                background: '#1e293b',
+                color: '#fff'
+            });
+        }
+        
+        localStorage.setItem('lumikids_favoritos', JSON.stringify(favoritos));
+        window.dispatchEvent(new CustomEvent('libroFavoritosActualizado'));
+    });
+
     // API KEY de Gemini
     const GEMINI_API_KEY = 'AQ.Ab8RN6JH5iVKxopMRgUu-4lVlH9TFI0s3nZXOUTOn09dmCxIoA';
 
@@ -808,6 +965,20 @@ Debes responder ÚNICAMENTE en formato JSON con la siguiente estructura, sin blo
     function cerrarLibro() {
         overlay.classList.add('oculto');
         document.body.style.overflow = '';
+
+        // Detener audio al cerrar
+        if (window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+            resetBotonAudio();
+        }
+
+        // Resetear zoom de texto
+        zoomLevel = 0;
+        overlay.classList.remove('zoom-grande', 'zoom-gigante');
+        if (btnAumentarTexto) {
+            btnAumentarTexto.classList.remove('zoom-activo');
+            btnAumentarTexto.querySelector('span').textContent = 'Aumentar texto';
+        }
         
         // Destruir el objeto flipbook al cerrar para reiniciar su estado completo
         if (flipBook) {
