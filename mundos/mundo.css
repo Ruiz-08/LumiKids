@@ -1377,3 +1377,1503 @@ body {
         font-size: 0.9rem;
     }
 }
+
+/* ============================================================
+   OVERLAY ROMPECABEZAS (GALERÍA DE PUZZLES)
+   ============================================================ */
+.overlay-rompecabezas {
+    position: fixed;
+    inset: 0;
+    z-index: 1000; /* Over bottom navigation bar */
+    background: rgba(5, 12, 35, 0);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    transition: all 0.5s cubic-bezier(0.25, 1, 0.3, 1);
+}
+
+.overlay-rompecabezas.activo {
+    background: rgba(5, 10, 25, 0.85);
+    backdrop-filter: blur(25px) saturate(130%);
+    -webkit-backdrop-filter: blur(25px) saturate(130%);
+    pointer-events: auto;
+}
+
+.rompecabezas-contenedor {
+    width: 90%;
+    max-width: 1000px;
+    height: 80vh;
+    background: linear-gradient(160deg, rgba(8, 20, 50, 0.95), rgba(15, 30, 75, 0.92));
+    border: 3.5px solid #ffd700; /* Gold borders matching the bottom bar */
+    border-radius: 32px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.15);
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transform: scale(0.85) translateY(30px);
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+}
+
+.overlay-rompecabezas.activo .rompecabezas-contenedor {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+/* Close button */
+.rompecabezas-cerrar {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 2.5px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-size: 1.8rem;
+    font-weight: 300;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.25s ease;
+}
+
+.rompecabezas-cerrar:hover {
+    background: rgba(255, 50, 50, 0.85);
+    border-color: #ff9999;
+    transform: rotate(90deg) scale(1.1);
+    box-shadow: 0 0 15px rgba(255, 60, 60, 0.4);
+}
+
+/* Header */
+.rompecabezas-cabecera {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.cabecera-emoji {
+    font-size: 2.8rem;
+    display: block;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    animation: pulso-puzzle 2.5s ease-in-out infinite;
+}
+
+@keyframes pulso-puzzle {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.1) rotate(5deg); }
+}
+
+.rompecabezas-titulo {
+    font-family: var(--font-titulo);
+    font-size: 2rem;
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+}
+
+.rompecabezas-subtitulo {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.4;
+}
+
+/* Filters */
+.rompecabezas-filtros {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.filtro-btn {
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 14px;
+    padding: 8px 16px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.25s ease;
+}
+
+.filtro-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.filtro-btn.activo {
+    background: rgba(255, 215, 0, 0.15);
+    border-color: #ffd700;
+    color: #ffd700;
+    box-shadow: 0 0 12px rgba(255, 215, 0, 0.25);
+}
+
+/* Puzzles Grid */
+.rompecabezas-grid-libros {
+    flex: 1;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    padding-right: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+.rompecabezas-grid-libros::-webkit-scrollbar {
+    width: 6px;
+}
+
+.rompecabezas-grid-libros::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
+}
+
+/* Card */
+.tarjeta-puzzle-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 12px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.tarjeta-puzzle-item:hover {
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+}
+
+.tarjeta-puzzle-contenido {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+/* Tablero Puzzle Board Preview */
+.preview-tablero-puzzle {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #0b1226;
+    border: 2.5px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    flex-shrink: 0;
+}
+
+.pieza-preview-item {
+    position: absolute;
+    box-sizing: border-box;
+    border: 0.5px solid rgba(255, 255, 255, 0.15);
+}
+
+.pieza-preview-item.bloqueada {
+    background: linear-gradient(135deg, #181530, #0c0a1a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 215, 0, 0.6);
+    font-size: 0.85rem;
+}
+
+.pieza-preview-item.desbloqueada {
+    filter: brightness(1.05) contrast(1.02);
+}
+
+/* Info container */
+.tarjeta-puzzle-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0; /* Prevents overflow of title */
+}
+
+.tarjeta-puzzle-categoria {
+    font-size: 0.58rem;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.tarjeta-puzzle-titulo {
+    font-family: var(--font-cuerpo);
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: #fff;
+    margin-bottom: 8px;
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tarjeta-puzzle-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 5px;
+}
+
+.tarjeta-puzzle-meta strong {
+    color: #ffd700;
+}
+
+.tarjeta-puzzle-progreso {
+    width: 100%;
+    height: 6px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.tarjeta-puzzle-progreso-relleno {
+    height: 100%;
+    background: linear-gradient(90deg, #ffd700, #4caf50);
+    border-radius: 4px;
+    transition: width 0.6s ease;
+}
+
+/* Theme color categories */
+.tarjeta-puzzle-item[data-mundo="bosque"] .tarjeta-puzzle-categoria { color: #4cff80; }
+.tarjeta-puzzle-item[data-mundo="pirata"] .tarjeta-puzzle-categoria { color: #f4791f; }
+.tarjeta-puzzle-item[data-mundo="letras"] .tarjeta-puzzle-categoria { color: #5b9bf4; }
+.tarjeta-puzzle-item[data-mundo="dragones"] .tarjeta-puzzle-categoria { color: #ff5252; }
+.tarjeta-puzzle-item[data-mundo="ciudad"] .tarjeta-puzzle-categoria { color: #ffd700; }
+
+.tarjeta-puzzle-item.completada {
+    border-color: rgba(255, 215, 0, 0.35);
+    background: rgba(255, 215, 0, 0.02);
+}
+
+.tarjeta-puzzle-item.completada .preview-tablero-puzzle {
+    border-color: #ffd700;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+}
+
+/* Responsive adjustments for Puzzles overlay */
+@media (max-width: 768px) {
+    .rompecabezas-contenedor {
+        width: 95%;
+        height: 85vh;
+        padding: 20px;
+        border-radius: 24px;
+    }
+    
+    .rompecabezas-titulo {
+        font-size: 1.5rem;
+    }
+    
+    .rompecabezas-grid-libros {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .filtro-btn {
+        padding: 6px 12px;
+        font-size: 0.7rem;
+    }
+}
+
+
+/* ====================================================================
+   BOTÓN "ARMAR" EN TARJETA COMPLETADA
+   ==================================================================== */
+.tarjeta-puzzle-btn-armar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    margin-top: 12px;
+    padding: 11px 16px;
+    background: linear-gradient(135deg, #f59e0b, #f97316, #ef4444);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    font-size: 0.88rem;
+    font-weight: 900;
+    font-family: 'Outfit', sans-serif;
+    cursor: pointer;
+    transition: all 0.28s ease;
+    box-shadow: 0 6px 20px rgba(249,115,22,0.45);
+    letter-spacing: 0.4px;
+    position: relative;
+    overflow: hidden;
+}
+.tarjeta-puzzle-btn-armar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 60%);
+    border-radius: 16px;
+}
+.tarjeta-puzzle-btn-armar:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 10px 30px rgba(249,115,22,0.6);
+}
+.tarjeta-puzzle-btn-armar:active {
+    transform: scale(0.97);
+}
+
+/* ====================================================================
+   OVERLAY DEL JUEGO DE ROMPECABEZAS — TEMA MÁGICO INFANTIL
+   ==================================================================== */
+.puzzle-juego-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    background: linear-gradient(135deg, #0d0a2e 0%, #1a0a3e 30%, #0a1e3e 60%, #041a2e 100%);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    overflow: auto;
+}
+.puzzle-juego-overlay.activo {
+    display: flex;
+    animation: fadeInPJ 0.4s ease;
+}
+@keyframes fadeInPJ {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* ── Decoraciones flotantes de fondo ── */
+.pj-bg-deco {
+    position: fixed;
+    font-size: 2.5rem;
+    pointer-events: none;
+    user-select: none;
+    opacity: 0.12;
+    animation: flotarDeco 6s ease-in-out infinite;
+    z-index: 0;
+}
+.pj-deco-1 { top: 5%; left: 8%;  animation-delay: 0s; }
+.pj-deco-2 { top: 10%; right: 10%; font-size: 3rem; animation-delay: 1s; }
+.pj-deco-3 { bottom: 20%; left: 5%; animation-delay: 2s; }
+.pj-deco-4 { bottom: 10%; right: 8%; font-size: 3.5rem; animation-delay: 0.5s; }
+.pj-deco-5 { top: 50%; left: 2%; animation-delay: 1.5s; }
+
+@keyframes flotarDeco {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    33%  { transform: translateY(-20px) rotate(8deg); }
+    66%  { transform: translateY(10px) rotate(-5deg); }
+}
+
+/* ── MODAL ── */
+.puzzle-juego-modal {
+    background: linear-gradient(160deg, rgba(22, 10, 60, 0.97) 0%, rgba(10, 20, 60, 0.97) 100%);
+    border: 2px solid rgba(167, 139, 250, 0.25);
+    border-radius: 28px;
+    box-shadow:
+        0 0 0 4px rgba(167,139,250,0.08),
+        0 32px 80px rgba(0,0,0,0.6),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+    width: 100%;
+    max-width: 980px;
+    max-height: 94vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: slideUpPJ 0.45s cubic-bezier(0.34,1.56,0.64,1);
+    position: relative;
+    z-index: 1;
+}
+@keyframes slideUpPJ {
+    from { transform: translateY(50px) scale(0.94); opacity: 0; }
+    to   { transform: translateY(0) scale(1);       opacity: 1; }
+}
+
+/* ══════════════════════════════════════
+   CABECERA
+══════════════════════════════════════ */
+.pj-cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    background: linear-gradient(90deg, rgba(124,58,237,0.2), rgba(59,130,246,0.15), rgba(236,72,153,0.1));
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    gap: 10px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+
+.pj-cab-izq { display: flex; align-items: center; gap: 12px; }
+
+.pj-cab-emoji-wrap {
+    position: relative;
+    width: 52px; height: 52px;
+    display: flex; align-items: center; justify-content: center;
+}
+.pj-cab-emoji {
+    font-size: 2rem;
+    filter: drop-shadow(0 0 10px rgba(167,139,250,0.7));
+    animation: pulsoEmoji 2s ease-in-out infinite;
+}
+@keyframes pulsoEmoji {
+    0%, 100% { transform: scale(1); }
+    50%       { transform: scale(1.15); }
+}
+.pj-cab-emoji-ring {
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px solid rgba(167,139,250,0.4);
+    animation: rotarRing 4s linear infinite;
+    background: conic-gradient(from 0deg, #a78bfa, #60a5fa, #f472b6, #a78bfa);
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), black calc(100% - 2px));
+    mask: radial-gradient(farthest-side, transparent calc(100% - 2px), black calc(100% - 2px));
+}
+@keyframes rotarRing { to { transform: rotate(360deg); } }
+
+.pj-cab-textos { display: flex; flex-direction: column; }
+.pj-cab-mundo {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    background: linear-gradient(90deg, #a78bfa, #60a5fa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.pj-cab-titulo {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: white;
+    max-width: 260px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Stats chips */
+.pj-cab-stats { display: flex; align-items: center; gap: 8px; }
+.pj-stat-chip {
+    display: flex; align-items: center; gap: 7px;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.pj-chip-piezas {
+    background: linear-gradient(135deg, rgba(124,58,237,0.3), rgba(99,102,241,0.2));
+    border: 1px solid rgba(124,58,237,0.4);
+    color: #c4b5fd;
+}
+.pj-chip-tiempo {
+    background: linear-gradient(135deg, rgba(6,182,212,0.2), rgba(59,130,246,0.2));
+    border: 1px solid rgba(6,182,212,0.35);
+    color: #67e8f9;
+    font-variant-numeric: tabular-nums;
+    min-width: 90px;
+}
+.pj-chip-icon { font-size: 1.05rem; }
+
+/* Botones cabecera */
+.pj-cab-acciones { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.pj-btn-mezclar, .pj-btn-pista, .pj-btn-ver-imagen {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 16px;
+    border-radius: 20px;
+    border: none;
+    font-size: 0.82rem;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+}
+.pj-btn-mezclar {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    box-shadow: 0 4px 14px rgba(99,102,241,0.4);
+}
+.pj-btn-mezclar:hover { transform: translateY(-2px) rotate(10deg); box-shadow: 0 7px 20px rgba(99,102,241,0.6); }
+
+.pj-btn-pista {
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    color: white;
+    box-shadow: 0 4px 14px rgba(245,158,11,0.4);
+}
+.pj-btn-pista:hover { transform: translateY(-2px); box-shadow: 0 7px 20px rgba(245,158,11,0.6); }
+.pj-btn-pista:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+.pj-btn-ver-imagen {
+    background: linear-gradient(135deg, #06b6d4, #3b82f6);
+    color: white;
+    box-shadow: 0 4px 14px rgba(6,182,212,0.35);
+}
+.pj-btn-ver-imagen:hover { transform: translateY(-2px); box-shadow: 0 7px 20px rgba(6,182,212,0.5); }
+
+.pj-btn-cerrar {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.7);
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.22s;
+    font-weight: 700;
+}
+.pj-btn-cerrar:hover {
+    background: rgba(239,68,68,0.3);
+    border-color: rgba(239,68,68,0.5);
+    color: white;
+    transform: rotate(90deg);
+}
+
+/* ══════════════════════════════════════
+   INSTRUCCIÓN ANIMADA
+══════════════════════════════════════ */
+.pj-instruccion {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 24px;
+    background: linear-gradient(90deg, rgba(251,191,36,0.1), rgba(167,139,250,0.12), rgba(251,191,36,0.1));
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.75);
+    flex-shrink: 0;
+    animation: parpadeoInstruccion 3s ease-in-out infinite;
+}
+.pj-instruccion-icono { font-size: 1.1rem; }
+@keyframes parpadeoInstruccion {
+    0%, 100% { opacity: 0.75; }
+    50%       { opacity: 1; }
+}
+
+/* ══════════════════════════════════════
+   ÁREA DE JUEGO
+══════════════════════════════════════ */
+.pj-area-juego {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0;
+    padding: 20px 16px 12px;
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+}
+
+/* ── Secciones (tablero y bandeja) ── */
+.pj-tablero-seccion, .pj-bandeja-seccion {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+.pj-seccion-titulo { display: flex; align-items: center; gap: 8px; }
+.pj-seccion-badge {
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: 0.5px;
+}
+.pj-badge-tablero {
+    background: linear-gradient(135deg, rgba(99,102,241,0.25), rgba(139,92,246,0.2));
+    border: 1.5px solid rgba(139,92,246,0.4);
+    color: #c4b5fd;
+}
+.pj-badge-bandeja {
+    background: linear-gradient(135deg, rgba(245,158,11,0.2), rgba(249,115,22,0.15));
+    border: 1.5px solid rgba(245,158,11,0.4);
+    color: #fde68a;
+}
+
+/* ── Marco del tablero ── */
+.pj-tablero-marco {
+    position: relative;
+    border-radius: 20px;
+    padding: 14px;
+    background: radial-gradient(ellipse at center, rgba(139,92,246,0.08) 0%, rgba(0,0,0,0) 70%);
+    border: 2px solid rgba(139,92,246,0.2);
+    box-shadow:
+        0 0 40px rgba(139,92,246,0.12),
+        inset 0 0 20px rgba(0,0,0,0.3);
+}
+
+.pj-tablero {
+    position: relative;
+    border-radius: 12px;
+    overflow: visible;
+    background: rgba(0,0,0,0.3);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+}
+
+.pj-tablero-referencia {
+    position: absolute;
+    top: 14px; left: 14px;
+    border-radius: 12px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    z-index: 0;
+}
+
+/* ── Celda wrapper (posición absoluta dentro del tablero) ── */
+.pj-celda-wrapper {
+    cursor: default;
+    transition: filter 0.2s;
+}
+.pj-celda-hover .pj-hueco-path {
+    stroke: #fbbf24 !important;
+    stroke-width: 2.5 !important;
+    filter: drop-shadow(0 0 6px #fbbf24);
+}
+.pj-celda-correcta {
+    animation: flashVerdeCelda 0.65s ease;
+}
+.pj-celda-incorrecta {
+    animation: flashRojoCelda 0.65s ease;
+}
+.pj-celda-pista {
+    animation: pulseAmarilloCell 2.5s ease;
+}
+@keyframes flashVerdeCelda {
+    0%,100% { filter: brightness(1); }
+    45%      { filter: brightness(1.6) drop-shadow(0 0 12px #22c55e); }
+}
+@keyframes flashRojoCelda {
+    0%,100% { filter: brightness(1); }
+    45%      { filter: brightness(1.4) drop-shadow(0 0 12px #ef4444); }
+}
+@keyframes pulseAmarilloCell {
+    0%,100% { filter: brightness(1); }
+    50%      { filter: brightness(1.5) drop-shadow(0 0 14px #fbbf24); }
+}
+
+/* ── SVG de hueco (celda vacía) ── */
+.pj-hueco-path {
+    fill: rgba(255,255,255,0.04);
+    stroke: rgba(167,139,250,0.35);
+    stroke-width: 1.5;
+    stroke-dasharray: 6 3;
+    transition: stroke 0.2s, stroke-width 0.2s;
+}
+.pj-hueco-num {
+    fill: rgba(255,255,255,0.15);
+    font-size: 13px;
+    font-weight: 800;
+    font-family: 'Outfit', sans-serif;
+}
+
+/* ── PIEZAS SVG ── */
+.pj-pieza-wrapper {
+    display: inline-block;
+    transition: transform 0.18s ease, filter 0.18s ease;
+}
+.pj-pieza-bandeja {
+    cursor: grab;
+}
+.pj-pieza-bandeja:hover {
+    transform: scale(1.1) translateY(-5px) rotate(-3deg);
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5)) drop-shadow(0 0 8px rgba(167,139,250,0.5));
+    z-index: 10;
+}
+.pj-pieza-tablero {
+    cursor: default;
+    pointer-events: none;
+}
+.pj-pieza-dragging {
+    opacity: 0.4;
+    transform: scale(0.95);
+}
+.pj-pieza-pista {
+    animation: parpadeoPieza 2.5s ease;
+}
+@keyframes parpadeoPieza {
+    0%,100% { filter: none; }
+    50% { filter: drop-shadow(0 0 14px #fbbf24) drop-shadow(0 0 6px #f59e0b); }
+}
+
+/* ── SEPARADOR FLECHA ── */
+.pj-flecha-central {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 0 16px;
+    flex-shrink: 0;
+    margin-top: 60px;
+}
+.pj-flecha-linea {
+    width: 2px;
+    height: 50px;
+    background: linear-gradient(to bottom, transparent, rgba(167,139,250,0.4), transparent);
+}
+.pj-flecha-icono {
+    font-size: 1.6rem;
+    animation: pulsoTarget 2s ease-in-out infinite;
+}
+@keyframes pulsoTarget {
+    0%,100% { transform: scale(1); }
+    50%      { transform: scale(1.2); }
+}
+
+/* ── BANDEJA DE PIEZAS ── */
+.pj-bandeja-marco {
+    border-radius: 18px;
+    padding: 14px;
+    background: linear-gradient(135deg, rgba(245,158,11,0.06), rgba(249,115,22,0.04));
+    border: 2px solid rgba(245,158,11,0.2);
+    box-shadow: 0 0 30px rgba(245,158,11,0.07), inset 0 0 20px rgba(0,0,0,0.25);
+    min-width: 220px;
+    max-width: 340px;
+}
+.pj-bandeja {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 4px;
+}
+.pj-bandeja::-webkit-scrollbar { width: 5px; }
+.pj-bandeja::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); border-radius: 10px; }
+.pj-bandeja::-webkit-scrollbar-thumb { background: rgba(245,158,11,0.4); border-radius: 10px; }
+
+.pj-bandeja-vacia {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 32px 20px;
+    color: #86efac;
+    font-weight: 800;
+    font-size: 0.92rem;
+    text-align: center;
+}
+.pj-bandeja-vacia-icono { font-size: 2.5rem; animation: reboteCheck 0.5s ease; }
+@keyframes reboteCheck {
+    0% { transform: scale(0); }
+    60% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+/* ══════════════════════════════════════
+   PIE — BARRA DE PROGRESO
+══════════════════════════════════════ */
+.pj-pie {
+    padding: 14px 24px 18px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    background: rgba(0,0,0,0.2);
+    flex-shrink: 0;
+}
+.pj-progreso-contenedor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+.pj-progreso-estrellas {
+    font-size: 1.3rem;
+    letter-spacing: 4px;
+    transition: all 0.4s ease;
+    filter: drop-shadow(0 0 4px rgba(251,191,36,0.5));
+}
+.pj-progreso-barra-fondo {
+    width: 100%;
+    max-width: 600px;
+    height: 14px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+.pj-progreso-barra-llena {
+    height: 100%;
+    border-radius: 14px;
+    transition: width 0.5s ease, background 0.4s ease;
+    background: linear-gradient(90deg, #6366f1, #8b5cf6);
+    position: relative;
+}
+.pj-progreso-brillo {
+    position: absolute;
+    top: 2px; left: 0;
+    right: 0; height: 4px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+    animation: brilloProgreso 2s ease-in-out infinite;
+}
+@keyframes brilloProgreso {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(300%); }
+}
+.pj-progreso-texto {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.5);
+    font-weight: 600;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* ══════════════════════════════════════
+   PANEL DE VICTORIA
+══════════════════════════════════════ */
+.pj-victoria {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(20,5,50,0.97) 0%, rgba(5,10,30,0.98) 100%);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    border-radius: 28px;
+    animation: fadeInPJ 0.5s ease;
+}
+.pj-victoria-contenido {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    text-align: center;
+    padding: 40px 32px;
+    max-width: 440px;
+    position: relative;
+    z-index: 2;
+}
+.pj-victoria-estrellas {
+    font-size: 2rem;
+    letter-spacing: 6px;
+    animation: reboteEstrellas 0.7s cubic-bezier(0.34,1.56,0.64,1);
+    filter: drop-shadow(0 0 10px rgba(251,191,36,0.8));
+}
+@keyframes reboteEstrellas {
+    from { transform: scale(0) rotate(-20deg); }
+    to   { transform: scale(1) rotate(0); }
+}
+.pj-victoria-emoji {
+    font-size: 4.5rem;
+    animation: reboteVic 0.7s 0.2s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes reboteVic {
+    from { transform: scale(0); }
+    to   { transform: scale(1); }
+}
+.pj-victoria-titulo {
+    font-family: 'Outfit', sans-serif;
+    font-size: 2rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #fbbf24, #f97316, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+}
+.pj-victoria-sub {
+    color: rgba(255,255,255,0.65);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    font-weight: 600;
+}
+.pj-victoria-imagen-wrap img {
+    border-radius: 20px;
+    box-shadow: 0 8px 36px rgba(0,0,0,0.5), 0 0 0 4px rgba(251,191,36,0.45);
+    animation: apareceImg 0.6s 0.4s ease both;
+}
+@keyframes apareceImg {
+    from { opacity: 0; transform: scale(0.75) rotate(-5deg); }
+    to   { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+.pj-victoria-btns { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
+.pj-btn-jugar-otro, .pj-btn-revolver {
+    display: flex; align-items: center; gap: 8px;
+    padding: 13px 24px;
+    border-radius: 30px;
+    font-size: 0.92rem;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: all 0.25s;
+    border: none;
+}
+.pj-btn-jugar-otro {
+    background: rgba(255,255,255,0.08);
+    border: 1.5px solid rgba(255,255,255,0.18);
+    color: rgba(255,255,255,0.85);
+}
+.pj-btn-jugar-otro:hover { background: rgba(255,255,255,0.16); color: white; transform: translateY(-2px); }
+.pj-btn-revolver {
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    color: white;
+    box-shadow: 0 6px 20px rgba(245,158,11,0.45);
+}
+.pj-btn-revolver:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(245,158,11,0.6); }
+
+/* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
+@media (max-width: 860px) {
+    .pj-area-juego { flex-direction: column; align-items: center; }
+    .pj-flecha-central { flex-direction: row; margin-top: 0; padding: 0; }
+    .pj-flecha-linea { width: 50px; height: 2px; background: linear-gradient(to right, transparent, rgba(167,139,250,0.4), transparent); }
+    .pj-bandeja-marco { max-width: 100%; min-width: unset; width: 100%; }
+    .pj-bandeja-seccion { width: 100%; }
+}
+@media (max-width: 600px) {
+    .pj-cabecera { flex-direction: column; align-items: flex-start; }
+    .pj-cab-acciones { flex-wrap: wrap; gap: 6px; }
+    .pj-cab-titulo { font-size: 0.95rem; max-width: 200px; }
+    .pj-btn-mezclar, .pj-btn-pista, .pj-btn-ver-imagen { padding: 7px 12px; font-size: 0.76rem; }
+}
+
+.tarjeta-puzzle-btn-armar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    margin-top: 10px;
+    padding: 9px 14px;
+    background: linear-gradient(135deg, #a78bfa, #7c3aed);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.82rem;
+    font-weight: 800;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 14px rgba(124,58,237,0.4);
+    letter-spacing: 0.3px;
+}
+.tarjeta-puzzle-btn-armar:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 24px rgba(124,58,237,0.55);
+    background: linear-gradient(135deg, #c4b5fd, #8b5cf6);
+}
+.tarjeta-puzzle-btn-armar:active {
+    transform: scale(0.98);
+}
+
+/* ====================================================================
+   OVERLAY DEL JUEGO DE ROMPECABEZAS
+   ==================================================================== */
+.puzzle-juego-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    background: rgba(5, 10, 30, 0.92);
+    backdrop-filter: blur(12px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    overflow: auto;
+}
+.puzzle-juego-overlay.activo {
+    display: flex;
+    animation: fadeInPJ 0.35s ease;
+}
+@keyframes fadeInPJ {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* ── MODAL ── */
+.puzzle-juego-modal {
+    background: linear-gradient(160deg, #0d1b3e 0%, #0a1628 60%, #080f20 100%);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 24px;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(124,58,237,0.15);
+    width: 100%;
+    max-width: 960px;
+    max-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: slideUpPJ 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    position: relative;
+    z-index: 1;
+}
+@keyframes slideUpPJ {
+    from { transform: translateY(40px) scale(0.96); opacity: 0; }
+    to   { transform: translateY(0) scale(1);       opacity: 1; }
+}
+
+/* ── CABECERA ── */
+.pj-cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    gap: 12px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+.pj-cab-izq {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.pj-cab-emoji {
+    font-size: 2rem;
+    filter: drop-shadow(0 0 8px rgba(167,139,250,0.6));
+}
+.pj-cab-titulo {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: white;
+    margin: 0 0 2px;
+    max-width: 280px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.pj-cab-mundo {
+    font-size: 0.75rem;
+    color: #a78bfa;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.pj-cab-der {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+.pj-stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.6);
+    font-weight: 600;
+}
+.pj-stat i { color: #a78bfa; }
+
+.pj-btn-mezclar {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(167,139,250,0.15);
+    border: 1px solid rgba(167,139,250,0.3);
+    color: #c4b5fd;
+    border-radius: 20px;
+    padding: 7px 16px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: all 0.25s;
+}
+.pj-btn-mezclar:hover {
+    background: rgba(167,139,250,0.28);
+    transform: rotate(15deg);
+}
+
+.pj-btn-cerrar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.7);
+    font-size: 1.3rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    line-height: 1;
+}
+.pj-btn-cerrar:hover {
+    background: rgba(239,68,68,0.25);
+    border-color: rgba(239,68,68,0.4);
+    color: #fca5a5;
+}
+
+/* ── ÁREA DE JUEGO ── */
+.pj-area-juego {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 24px 20px 16px;
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+}
+
+/* ── TABLERO ── */
+.pj-tablero-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+.pj-tablero-label, .pj-bandeja-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex; align-items: center; gap: 6px;
+}
+
+.pj-tablero {
+    display: grid;
+    border: 2px solid rgba(167,139,250,0.25);
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 0 0 6px rgba(167,139,250,0.06), 0 8px 32px rgba(0,0,0,0.4);
+}
+
+.pj-tablero-referencia {
+    position: absolute;
+    top: 0; left: 0;
+    border-radius: 14px;
+    background-repeat: no-repeat;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    z-index: 0;
+}
+
+/* ── CELDAS ── */
+.pj-celda {
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.07);
+    background: rgba(255,255,255,0.03);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, box-shadow 0.2s;
+    cursor: default;
+    z-index: 1;
+    overflow: hidden;
+}
+.pj-celda-hint {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.12);
+    font-weight: 800;
+    font-family: 'Outfit', sans-serif;
+    pointer-events: none;
+    user-select: none;
+}
+
+.pj-celda-hover {
+    background: rgba(167,139,250,0.2) !important;
+    box-shadow: inset 0 0 0 2px rgba(167,139,250,0.5);
+}
+.pj-celda-correcta {
+    animation: flash-verde 0.6s ease;
+}
+.pj-celda-incorrecta {
+    animation: flash-rojo 0.6s ease;
+}
+.pj-celda-pista {
+    animation: pulse-pista 2s ease;
+}
+
+@keyframes flash-verde {
+    0%, 100% { background: transparent; }
+    40% { background: rgba(34,197,94,0.4); box-shadow: inset 0 0 0 2px #22c55e; }
+}
+@keyframes flash-rojo {
+    0%, 100% { background: transparent; }
+    40% { background: rgba(239,68,68,0.35); box-shadow: inset 0 0 0 2px #ef4444; }
+}
+@keyframes pulse-pista {
+    0%, 100% { box-shadow: inset 0 0 0 0 rgba(251,191,36,0.5); }
+    50% { background: rgba(251,191,36,0.2); box-shadow: inset 0 0 0 3px #fbbf24; }
+}
+
+/* ── PIEZAS ── */
+.pj-pieza {
+    border-radius: 6px;
+    background-repeat: no-repeat;
+    cursor: grab;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    user-select: none;
+    -webkit-user-select: none;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.pj-pieza-tablero {
+    border-radius: 0;
+    cursor: default;
+    box-shadow: none;
+}
+.pj-pieza-bandeja {
+    border: 2px solid rgba(255,255,255,0.12);
+}
+.pj-pieza-bandeja:hover {
+    transform: scale(1.08) translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.45), 0 0 0 2px rgba(167,139,250,0.4);
+    z-index: 10;
+}
+.pj-pieza-dragging {
+    opacity: 0.5;
+    transform: scale(1.05);
+    cursor: grabbing;
+}
+.pj-pieza-pista {
+    animation: parpadeoPista 2s ease;
+}
+@keyframes parpadeoPista {
+    0%, 100% { box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+    50%       { box-shadow: 0 0 0 3px #fbbf24, 0 8px 24px rgba(251,191,36,0.4); }
+}
+
+/* ── SEPARADOR ── */
+.pj-separador {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 0 18px;
+    flex-shrink: 0;
+}
+.pj-sep-linea {
+    flex: 1;
+    width: 1px;
+    background: rgba(255,255,255,0.06);
+    min-height: 40px;
+}
+.pj-sep-texto {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.15);
+}
+
+/* ── BANDEJA ── */
+.pj-bandeja-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    max-width: 340px;
+    flex-shrink: 0;
+}
+.pj-bandeja {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    min-width: 200px;
+    padding: 16px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    max-height: 360px;
+    overflow-y: auto;
+}
+.pj-bandeja::-webkit-scrollbar { width: 4px; }
+.pj-bandeja::-webkit-scrollbar-thumb { background: rgba(167,139,250,0.3); border-radius: 4px; }
+
+.pj-bandeja-vacia {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    color: #22c55e;
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 24px;
+}
+.pj-bandeja-vacia i { font-size: 2rem; }
+
+/* ── PIE ── */
+.pj-pie {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 24px 18px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    gap: 16px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+.pj-progreso-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 200px;
+}
+.pj-progreso-barra-fondo {
+    flex: 1;
+    height: 8px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 8px;
+    overflow: hidden;
+}
+.pj-progreso-barra-llena {
+    height: 100%;
+    border-radius: 8px;
+    transition: width 0.5s ease, background 0.4s ease;
+    background: linear-gradient(90deg,#f59e0b,#d97706);
+}
+.pj-progreso-texto {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.5);
+    font-weight: 600;
+    white-space: nowrap;
+}
+.pj-pie-btns {
+    display: flex;
+    gap: 10px;
+}
+.pj-btn-pista, .pj-btn-ver-imagen {
+    display: flex; align-items: center; gap: 7px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.1);
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: all 0.22s;
+}
+.pj-btn-pista {
+    background: rgba(251,191,36,0.12);
+    color: #fbbf24;
+    border-color: rgba(251,191,36,0.25);
+}
+.pj-btn-pista:hover:not(:disabled) { background: rgba(251,191,36,0.25); transform: translateY(-2px); }
+.pj-btn-pista:disabled { opacity: 0.4; cursor: not-allowed; }
+.pj-btn-ver-imagen {
+    background: rgba(96,165,250,0.12);
+    color: #60a5fa;
+    border-color: rgba(96,165,250,0.25);
+}
+.pj-btn-ver-imagen:hover { background: rgba(96,165,250,0.22); transform: translateY(-2px); }
+
+/* ── PANEL DE VICTORIA ── */
+.pj-victoria {
+    position: absolute;
+    inset: 0;
+    background: rgba(5,10,30,0.95);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    border-radius: 24px;
+    animation: fadeInPJ 0.5s ease;
+}
+.pj-victoria-contenido {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    text-align: center;
+    padding: 40px 30px;
+    max-width: 420px;
+    position: relative;
+    z-index: 2;
+}
+.pj-victoria-emoji {
+    font-size: 4rem;
+    animation: reboteVic 0.7s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes reboteVic {
+    from { transform: scale(0) rotate(-20deg); }
+    to   { transform: scale(1) rotate(0deg); }
+}
+.pj-victoria-titulo {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 900;
+    background: linear-gradient(135deg,#fbbf24,#f59e0b,#d97706);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.pj-victoria-sub {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+.pj-victoria-imagen-wrap img {
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 3px rgba(251,191,36,0.4);
+    animation: apareceImg 0.5s 0.3s both ease;
+}
+@keyframes apareceImg {
+    from { opacity: 0; transform: scale(0.8); }
+    to   { opacity: 1; transform: scale(1); }
+}
+.pj-victoria-btns {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 6px;
+}
+.pj-btn-jugar-otro, .pj-btn-revolver {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 22px;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: all 0.25s;
+    border: none;
+}
+.pj-btn-jugar-otro {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.8);
+}
+.pj-btn-jugar-otro:hover { background: rgba(255,255,255,0.15); color: white; transform: translateY(-2px); }
+.pj-btn-revolver {
+    background: linear-gradient(135deg, #a78bfa, #7c3aed);
+    color: white;
+    box-shadow: 0 6px 20px rgba(124,58,237,0.4);
+}
+.pj-btn-revolver:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(124,58,237,0.55); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+    .pj-area-juego { flex-direction: column; gap: 16px; padding: 16px 12px; }
+    .pj-separador { flex-direction: row; padding: 0; }
+    .pj-sep-linea { min-height: 1px; min-width: 40px; height: 1px; width: auto; flex: 1; }
+    .pj-bandeja-wrap { max-width: 100%; }
+    .pj-cab-titulo { max-width: 160px; font-size: 0.95rem; }
+    .pj-pie { flex-direction: column; align-items: stretch; }
+    .pj-pie-btns { justify-content: center; }
+}
+

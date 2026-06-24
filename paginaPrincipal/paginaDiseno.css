@@ -1121,77 +1121,102 @@ h4 {
     flex-direction: row !important;
     justify-content: space-between;
     align-items: center;
-    gap: 20px;
+    gap: 24px;
+    padding: 32px !important;
 }
 
 .padres-contenido {
-    flex: 1.2;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.titulo-inferior.padres-titulo {
+    font-size: 1.5rem;
+    color: var(--azul-primario);
+    margin-bottom: 12px;
 }
 
 .padres-descripcion-texto {
-    font-size: 0.95rem;
-    line-height: 1.5;
+    font-size: 0.93rem;
+    line-height: 1.6;
     color: var(--gris-oscuro);
     margin-bottom: 20px;
+    max-width: 260px;
 }
 
 .padres-checklist {
     list-style: none;
-    margin-bottom: 25px;
+    margin-bottom: 28px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
 }
 
 .padres-checklist li {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 0.9rem;
-    font-weight: 600;
+    gap: 12px;
+    font-size: 0.92rem;
+    font-weight: 700;
     color: var(--gris-oscuro);
+    transition: transform 0.2s ease;
+}
+
+.padres-checklist li:hover {
+    transform: translateX(4px);
 }
 
 .checklist-icono {
-    background-color: #E1F5FE;
+    background-color: hsl(199, 100%, 92%);
     color: var(--azul-brillante);
-    width: 22px;
-    height: 22px;
+    min-width: 26px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 800;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
+    box-shadow: 0 2px 6px rgba(0, 140, 255, 0.2);
+    flex-shrink: 0;
 }
 
 .boton-padres-cta {
     background: linear-gradient(135deg, #1E88E5, #1565C0);
     color: var(--blanco-puro);
     border: none;
-    border-radius: 25px;
-    padding: 12px 24px;
+    border-radius: 30px;
+    padding: 14px 30px;
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 1rem;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(21, 101, 192, 0.25);
+    box-shadow: 0 5px 18px rgba(21, 101, 192, 0.35);
     transition: all 0.3s ease;
+    align-self: flex-start;
+    letter-spacing: 0.2px;
 }
 
 .boton-padres-cta:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(21, 101, 192, 0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(21, 101, 192, 0.5);
+    background: linear-gradient(135deg, #1976D2, #0D47A1);
 }
 
 .padres-imagen-wrapper {
-    flex: 0.8;
+    flex: 0 0 auto;
+    width: 190px;
 }
 
 .imagen-padres-familia {
     width: 100%;
     height: auto;
     object-fit: cover;
-    border-radius: var(--borde-redondeado-md);
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0, 59, 143, 0.1);
+    display: block;
 }
 
 /* --- Modales --- */

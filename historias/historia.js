@@ -40,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 totalPiezasPosibles += libro.piezas;
                 
                 const completado = localStorage.getItem(`lumikids_completed_${libro.id}`) === 'true';
+                const esFavorito = JSON.parse(localStorage.getItem('lumikids_favoritos') || '[]').includes(libro.id);
                 if (completado) {
                     librosCompletadosEnMundo++;
                     totalPiezasGanadas += libro.piezas;
@@ -69,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     ? `<div class="capa-bloqueo-libro"><span class="icono-candado">🔒</span><span class="texto-bloqueo">Bloqueado</span></div>` 
                                     : (completado ? `<span class="badge-completado">✓ Completado</span>` : `<span class="badge-activo">Disponible</span>`)
                                 }
+                                ${!libroBloqueado && esFavorito ? `<span class="badge-favorito"><i class="bi bi-heart-fill"></i> Favorito</span>` : ''}
                                 <h3 class="titulo-tarjeta-historia">${libro.titulo}</h3>
                             </div>
                             <div class="tarjeta-historia-info">
@@ -203,6 +205,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 4. EVENTOS DE ACTUALIZACIÓN ---
     window.addEventListener('libroCompletado', (e) => {
         console.log('Refrescando biblioteca por libro completado:', e.detail.libroId);
+        renderizarBiblioteca();
+    });
+
+    window.addEventListener('libroFavoritosActualizado', () => {
+        console.log('Refrescando biblioteca por cambio en favoritos');
         renderizarBiblioteca();
     });
 

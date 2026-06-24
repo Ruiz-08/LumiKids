@@ -501,8 +501,6 @@
 .puzzle-ranura-destino {
     position: absolute;
     box-sizing: border-box;
-    border: 1.5px dashed rgba(255, 255, 255, 0.15);
-    background: rgba(255, 255, 255, 0.02);
     transition: all 0.3s ease;
 }
 
@@ -534,18 +532,17 @@
     gap: 20px;
     min-height: 120px;
     margin-bottom: 25px;
+    overflow-x: auto;
 }
 
 .puzzle-pieza-drag {
-    width: 80px;
-    height: 80px;
-    border-radius: 8px;
-    border: 2px solid #6366f1;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    border: none;
+    background: none;
+    box-shadow: none;
     cursor: grab;
     touch-action: none;
     z-index: 10;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transition: transform 0.15s ease;
     user-select: none;
 }
 
@@ -554,8 +551,7 @@
 }
 
 .puzzle-pieza-drag.dragging {
-    transform: scale(1.1);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6), 0 0 15px rgba(99, 102, 241, 0.5);
+    transform: scale(1.08);
     z-index: 1000;
 }
 
@@ -565,6 +561,16 @@
     box-shadow: none;
     pointer-events: none;
     transition: all 0.2s ease;
+}
+
+.puzzle-ranura-svg {
+    filter: drop-shadow(0 0 2px rgba(255,255,255,0.05));
+    transition: all 0.3s ease;
+}
+
+.puzzle-ranura-destino:hover .puzzle-ranura-svg path {
+    stroke: rgba(99, 102, 241, 0.6);
+    fill: rgba(99, 102, 241, 0.04);
 }
 
 /* 9. Fase 5: Celebración Final */
@@ -741,4 +747,9 @@
     border-color: #dc3545 !important;
     color: #fff !important;
     animation: shakeCard 1.5s infinite;
+}
+
+/* Expande el tamaño de la tarjeta cuando el rompecabezas de React está activo */
+.juegos-tarjeta.puzzle-expanded {
+    max-width: 900px !important;
 }

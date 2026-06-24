@@ -23,9 +23,12 @@
             piezasTotal: 4,
             vidas: 6,
             letrasAdivinadas: [],
-            pasoActual: 1 // 1: Comprensión, 2: Ahorcado, 3: Recompensa, 4: Rompecabezas, 5: Completado
+            pasoActual: 1, // 1: Comprensión, 2: Ahorcado, 3: Recompensa, 4: Rompecabezas, 5: Completado
+            conectores: null
         }
     };
+
+    let currentReactPuzzleRoot = null;
 
     // ─── 1. Sintetizador de Sonidos Mágicos (AudioContext) ──────────────────────────
     function playSound(type) {
@@ -156,6 +159,231 @@
         8: { cols: 4, rows: 2 }
     };
 
+    /* ============================================================
+       GENERACIÓN DE CONECTORES Y PATHS DE ROMPECABEZAS SVG (Juegos)
+       ============================================================ */
+    function generarConectores(cols, rows) {
+        const c = { right: [], down: [] };
+        // Bordes horizontales (right)
+        for (let r = 0; r < rows; r++) {
+            c.right[r] = [];
+            for (let col = 0; col < cols - 1; col++) {
+                c.right[r][col] = Math.random() > 0.5 ? 1 : -1;
+            }
+        }
+        // Bordes verticales (down)
+        for (let r = 0; r < rows - 1; r++) {
+            c.down[r] = [];
+            for (let col = 0; col < cols; col++) {
+                c.down[r][col] = Math.random() > 0.5 ? 1 : -1;
+            }
+        }
+        return c;
+    }
+
+    function crearPathPieza(piezaId, w, h, conectores, cols, rows) {
+        const col = piezaId % cols;
+        const row = Math.floor(piezaId / cols);
+
+        // Obtener el conector para cada borde (0 = borde exterior, 1 = pestaña, -1 = hueco)
+        const topC    = row > 0            ? -conectores.down[row-1][col]     : 0;
+        const bottomC = row < rows - 1     ?  conectores.down[row][col]       : 0;
+        const leftC   = col > 0            ? -conectores.right[row][col-1]    : 0;
+        const rightC  = col < cols - 1     ?  conectores.right[row][col]      : 0;
+
+        // Tamaño de pestaña S constante basado en el tamaño menor de la pieza (28%)
+        const S = Math.min(w, h) * 0.28;
+
+        function nubPath(x1, y1, x2, y2, sign) {
+            if (sign === 0) return `L ${x2.toFixed(2)} ${y2.toFixed(2)}`;
+
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+            const len = Math.hypot(dx, dy);
+            
+            // Vector normal unitario apuntando hacia afuera
+            const nx = dy / len;
+            const ny = -dx / len;
+
+            // Amplitud de la pestaña
+            const A = S * sign;
+
+            // Punto medio del borde
+            const mx = (x1 + x2) / 2;
+            const my = (y1 + y2) / 2;
+
+            // Vector dirección unitario
+            const ux = dx / len;
+            const uy = dy / len;
+
+            // Mapeo de coordenadas locales (u: tangencial, n: normal) respecto al centro
+            const p = (uVal, nVal) => {
+                const px = mx + uVal * S * ux + nVal * A * nx;
+                const py = my + uVal * S * uy + nVal * A * ny;
+                return `${px.toFixed(2)} ${py.toFixed(2)}`;
+            };
+
+            // Curva de rompecabezas clásica simétrica y suave (C1-continua)
+            return [
+                `L ${p(-0.467, 0)}`,
+                `C ${p(-0.20, 0)}, ${p(-0.15, 0.25)}, ${p(-0.40, 0.40)}`, // Cuello Izquierdo
+                `C ${p(-0.90, 0.70)}, ${p(-0.667, 1.0)}, ${p(0.0, 1.0)}`, // Cabeza
+                `C ${p(0.667, 1.0)}, ${p(0.90, 0.70)}, ${p(0.40, 0.40)}`, // Cabeza Derecha
+                `C ${p(0.15, 0.25)}, ${p(0.20, 0)}, ${p(0.467, 0)}`, // Cuello Derecho
+                `L ${x2.toFixed(2)} ${y2.toFixed(2)}`
+            ].join(' ');
+        }
+
+        return [
+            `M 0 0`,
+            nubPath(0, 0, w, 0, topC),        // Borde superior
+            nubPath(w, 0, w, h, rightC),      // Borde derecho
+            nubPath(w, h, 0, h, bottomC),     // Borde inferior
+            nubPath(0, h, 0, 0, leftC),       // Borde izquierdo
+            `Z`
+        ].join(' ');
+    }
+
+    function desplazarPath(pathStr, dx, dy) {
+        pathStr = pathStr.replace(/,/g, ' ');
+        // Expresiones regulares corregidas para capturar opcionalmente el signo negativo (-?)
+        return pathStr.replace(/([ML])\s*(-?[\d.]+)\s+(-?[\d.]+)/g, (m, cmd, x, y) =>
+            `${cmd} ${parseFloat(x)+dx} ${parseFloat(y)+dy}`
+        ).replace(/([C])\s*(-?[\d.]+)\s+(-?[\d.]+)\s+(-?[\d.]+)\s+(-?[\d.]+)\s+(-?[\d.]+)\s+(-?[\d.]+)/g,
+            (m, cmd, x1, y1, x2, y2, x, y) =>
+            `${cmd} ${parseFloat(x1)+dx} ${parseFloat(y1)+dy} ${parseFloat(x2)+dx} ${parseFloat(y2)+dy} ${parseFloat(x)+dx} ${parseFloat(y)+dy}`
+        );
+    }
+
+    function crearElementoPiezaSVG(piezaId, d, enTablero) {
+        const P = LUMIKIDS_JUEGOS.estado.piezasTotal;
+        const grid = CONFIG_GRID_PUZZLE[P] || CONFIG_GRID_PUZZLE[4];
+        const cols = grid.cols;
+        const rows = grid.rows;
+
+        const puzzleWidth = 300;
+        const puzzleHeight = 400;
+        const pieceW = puzzleWidth / cols;
+        const pieceH = puzzleHeight / rows;
+
+        // Si no está en el tablero, agregamos un amplio overflow para los conectores curvos (hasta 60px)
+        const overflow = enTablero ? 0 : 60;
+        const W  = pieceW + overflow * 2;
+        const H  = pieceH + overflow * 2;
+
+        const col = piezaId % cols;
+        const row = Math.floor(piezaId / cols);
+        const bgX = -(col * pieceW) + overflow;
+        const bgY = -(row * pieceH) + overflow;
+
+        const svgNs = 'http://www.w3.org/2000/svg';
+        const wrapper = document.createElement('div');
+        wrapper.className = `puzzle-pieza-drag ${enTablero ? 'snapped' : ''}`;
+        wrapper.dataset.pieceIdx = piezaId;
+        wrapper.style.cssText = `
+            width:${W}px; height:${H}px;
+            position:absolute; flex-shrink:0;
+            cursor:${enTablero ? 'default' : 'grab'};
+        `;
+
+        const svg = document.createElementNS(svgNs, 'svg');
+        svg.setAttribute('width',  W);
+        svg.setAttribute('height', H);
+        svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+        svg.style.cssText = 'overflow:visible;display:block;';
+
+        // Defs: clipPath + filtros de sombra
+        const defs = document.createElementNS(svgNs, 'defs');
+        const clipId = `clip-juego-p${piezaId}-${Math.random().toString(36).slice(2,7)}`;
+
+        const clipPath = document.createElementNS(svgNs, 'clipPath');
+        clipPath.setAttribute('id', clipId);
+        const pathEl = document.createElementNS(svgNs, 'path');
+        const pathD = crearPathPieza(piezaId, pieceW, pieceH, LUMIKIDS_JUEGOS.estado.conectores, cols, rows);
+        pathEl.setAttribute('d', pathD);
+        pathEl.setAttribute('transform', `translate(${overflow}, ${overflow})`);
+        clipPath.appendChild(pathEl);
+
+        // Filtro de sombra para bandeja
+        const filterId = `shadow-${clipId}`;
+        const filter = document.createElementNS(svgNs, 'filter');
+        filter.setAttribute('id', filterId);
+        filter.setAttribute('x', '-20%'); filter.setAttribute('y', '-20%');
+        filter.setAttribute('width', '140%'); filter.setAttribute('height', '140%');
+        const feDropShadow = document.createElementNS(svgNs, 'feDropShadow');
+        feDropShadow.setAttribute('dx', '2'); feDropShadow.setAttribute('dy', '3');
+        feDropShadow.setAttribute('stdDeviation', '3');
+        feDropShadow.setAttribute('flood-color', 'rgba(0,0,0,0.5)');
+        filter.appendChild(feDropShadow);
+
+        defs.appendChild(clipPath);
+        defs.appendChild(filter);
+        svg.appendChild(defs);
+
+        // Grupo con clip
+        const g = document.createElementNS(svgNs, 'g');
+        g.setAttribute('clip-path', `url(#${clipId})`);
+        if (!enTablero) g.setAttribute('filter', `url(#${filterId})`);
+
+        const img = document.createElementNS(svgNs, 'image');
+        img.setAttributeNS('http://www.w3.org/1999/xlink', 'href', d.imagen);
+        img.setAttribute('x', bgX);
+        img.setAttribute('y', bgY);
+        img.setAttribute('width',  puzzleWidth);
+        img.setAttribute('height', puzzleHeight);
+        img.setAttribute('preserveAspectRatio', 'none');
+        g.appendChild(img);
+
+        // Borde
+        const border = document.createElementNS(svgNs, 'path');
+        border.setAttribute('d', pathD);
+        border.setAttribute('transform', `translate(${overflow}, ${overflow})`);
+        border.setAttribute('fill', 'none');
+        border.setAttribute('stroke', enTablero ? 'rgba(255,255,255,0.2)' : '#6366f1');
+        border.setAttribute('stroke-width', enTablero ? '1.5' : '2.5');
+
+        svg.appendChild(g);
+        svg.appendChild(border);
+        wrapper.appendChild(svg);
+
+        return wrapper;
+    }
+
+    function crearSVGHuecoJuego(piezaId) {
+        const P = LUMIKIDS_JUEGOS.estado.piezasTotal;
+        const grid = CONFIG_GRID_PUZZLE[P] || CONFIG_GRID_PUZZLE[4];
+        const cols = grid.cols;
+        const rows = grid.rows;
+
+        const puzzleWidth = 300;
+        const puzzleHeight = 400;
+        const pieceW = puzzleWidth / cols;
+        const pieceH = puzzleHeight / rows;
+
+        const overflow = 15;
+        const W = pieceW + overflow * 2;
+        const H = pieceH + overflow * 2;
+
+        const path = crearPathPieza(piezaId, pieceW, pieceH, LUMIKIDS_JUEGOS.estado.conectores, cols, rows);
+        const svgNs = 'http://www.w3.org/2000/svg';
+        const svg = document.createElementNS(svgNs, 'svg');
+        svg.setAttribute('class', 'puzzle-ranura-svg');
+        svg.setAttribute('width',  W);
+        svg.setAttribute('height', H);
+        svg.setAttribute('viewBox', `${-overflow} ${-overflow} ${W} ${H}`);
+        svg.style.cssText = `position:absolute;left:${-overflow}px;top:${-overflow}px;pointer-events:none;`;
+
+        const pathEl = document.createElementNS(svgNs, 'path');
+        pathEl.setAttribute('d', path);
+        pathEl.setAttribute('fill', 'rgba(255,255,255,0.02)');
+        pathEl.setAttribute('stroke', 'rgba(255,255,255,0.15)');
+        pathEl.setAttribute('stroke-width', '1.5');
+        pathEl.setAttribute('stroke-dasharray', '4 4');
+        svg.appendChild(pathEl);
+
+        return svg;
+    }
+
     // ─── 3. Iniciar el Flujo de Juego ──────────────────────────────────────────────
     LUMIKIDS_JUEGOS.iniciarJuego = function(mundo, libroId, capNum, totalCaps, d, callback) {
         LUMIKIDS_JUEGOS.overlay = document.getElementById('overlay-juegos');
@@ -170,8 +398,11 @@
         LUMIKIDS_JUEGOS.estado.totalCaps = totalCaps;
         LUMIKIDS_JUEGOS.estado.piezasTotal = d.piezasTotal || 4;
 
+        // Generar conectores
+        const grid = CONFIG_GRID_PUZZLE[LUMIKIDS_JUEGOS.estado.piezasTotal] || CONFIG_GRID_PUZZLE[4];
+        LUMIKIDS_JUEGOS.estado.conectores = generarConectores(grid.cols, grid.rows);
+
         // Calcular qué número de pieza corresponde a este desafío
-        // Para i de 0 a (piezasTotal - 1), el capNum de desafío es Math.floor((i+1)*totalCaps/piezasTotal)
         let piezaIndexAsignada = 0;
         for (let i = 0; i < LUMIKIDS_JUEGOS.estado.piezasTotal; i++) {
             const capDesafio = Math.floor((i + 1) * totalCaps / LUMIKIDS_JUEGOS.estado.piezasTotal);
@@ -253,6 +484,15 @@
     function irAlPaso(pasoNum, d) {
         LUMIKIDS_JUEGOS.estado.pasoActual = pasoNum;
         
+        // Ajustar ancho de la tarjeta para el rompecabezas React
+        if (LUMIKIDS_JUEGOS.tarjeta) {
+            if (pasoNum === 4) {
+                LUMIKIDS_JUEGOS.tarjeta.classList.add('puzzle-expanded');
+            } else {
+                LUMIKIDS_JUEGOS.tarjeta.classList.remove('puzzle-expanded');
+            }
+        }
+        
         // Actualizar barra de pasos
         const pct = ((pasoNum - 1) / 3) * 100;
         const linea = document.getElementById('pasos-progreso-linea');
@@ -290,8 +530,6 @@
 
         const img = document.querySelector('#lumi-avatar-juego');
         if (img) {
-            // Si el proyecto tuviera otros avatares por pose se cambiaría aquí.
-            // Para mantener consistencia con los recursos actuales usamos zorrito_saludando.png
             img.src = 'imagenes/zorrito_saludando.png';
         }
     }
@@ -327,7 +565,6 @@
     }
 
     function verificarRespuestaComprension(idxSelected, botones, q, d) {
-        // Bloquear todos los botones
         botones.forEach(b => b.disabled = true);
 
         const explicacion = document.getElementById('comprension-explicacion');
@@ -337,10 +574,8 @@
             botones[idxSelected].classList.add('correcta');
             actualizarDialogoLumi("¡Eso es totalmente correcto! ¡Tienes una memoria fantástica! 🌟 Siguiente desafío...", 'feliz');
 
-            // Animación de éxito con GSAP en la tarjeta
             gsap.to(LUMIKIDS_JUEGOS.tarjeta, { scale: 1.03, duration: 0.15, yoyo: true, repeat: 1 });
 
-            // Pasar a ahorcado en 2 segundos
             setTimeout(() => {
                 irAlPaso(2, d);
             }, 2000);
@@ -350,18 +585,15 @@
             botones[q.correcta].classList.add('correcta'); // Revelar la correcta
             actualizarDialogoLumi("¡Oh, estuviste cerca! Pero no te preocupes, de los errores se aprende. Inténtalo de nuevo. 🧭", 'triste');
 
-            // Mostrar explicación
             if (explicacion) {
                 explicacion.textContent = q.explicacion;
                 explicacion.classList.remove('oculto');
             }
 
-            // Animación de shake en la tarjeta
             LUMIKIDS_JUEGOS.tarjeta.classList.remove('shake-animation');
             void LUMIKIDS_JUEGOS.tarjeta.offsetWidth; // Forzar reflujo
             LUMIKIDS_JUEGOS.tarjeta.classList.add('shake-animation');
 
-            // Botón de reintento
             const retryBtn = document.createElement('button');
             retryBtn.className = 'juegos-btn-principal';
             retryBtn.style.marginTop = '25px';
@@ -383,20 +615,16 @@
 
         LUMIKIDS_JUEGOS.cuerpo.innerHTML = `
             <div class="fase-ahorcado">
-                <!-- Vidas representadas por corazones -->
                 <div class="ahorcado-vidas" id="ahorcado-vidas-caja">
                     ${Array(6).fill('<i class="bi bi-heart-fill ahorcado-vida-corazon"></i>').join('')}
                 </div>
 
-                <!-- Caja de Pista -->
                 <div class="ahorcado-pista-caja">
                     <strong>Pista:</strong> "${a.pista}"
                 </div>
 
-                <!-- Espacios de letras de la palabra -->
                 <div class="ahorcado-palabra-caja" id="ahorcado-palabra-letras"></div>
 
-                <!-- Teclado en pantalla (A-Z) -->
                 <div class="ahorcado-teclado" id="ahorcado-teclado-letras"></div>
             </div>
         `;
@@ -405,7 +633,6 @@
         construirTecladoAhorcado(d);
     }
 
-    // Renderizar las rayitas _ _ _ de la palabra
     function actualizarEspacioPalabras() {
         const container = document.getElementById('ahorcado-palabra-letras');
         if (!container) return;
@@ -417,7 +644,6 @@
             const span = document.createElement('span');
             span.className = 'ahorcado-letra-espacio';
             
-            // Si es un espacio o un carácter especial, revelarlo
             if (letra === ' ' || letra === '-' || letra === '_') {
                 span.textContent = letra;
                 span.style.borderBottom = 'none';
@@ -431,7 +657,6 @@
         }
     }
 
-    // Construir los botones del teclado virtual
     function construirTecladoAhorcado(d) {
         const container = document.getElementById('ahorcado-teclado-letras');
         if (!container) return;
@@ -452,7 +677,6 @@
         });
     }
 
-    // Evaluar la letra clickeada
     function procesarIntentoLetra(letra, btn, d) {
         const palabra = LUMIKIDS_JUEGOS.estado.ahorcado.palabra.toUpperCase();
 
@@ -462,12 +686,10 @@
             LUMIKIDS_JUEGOS.estado.letrasAdivinadas.push(letra);
             actualizarEspacioPalabras();
 
-            // Comprobar si se ha adivinado la palabra completa
             const letrasUnicas = Array.from(new Set(palabra.replace(/[^A-ZÑ]/g, '')));
             const ganaste = letrasUnicas.every(l => LUMIKIDS_JUEGOS.estado.letrasAdivinadas.includes(l));
 
             if (ganaste) {
-                // Deshabilitar todo el teclado
                 document.querySelectorAll('.teclado-letra-btn').forEach(b => b.disabled = true);
                 actualizarDialogoLumi("¡Excelente! Adivinaste la palabra. ¡Hemos ganado una pieza mágica! 🏆", 'feliz');
 
@@ -480,7 +702,6 @@
             btn.classList.add('incorrecto');
             LUMIKIDS_JUEGOS.estado.vidas--;
 
-            // Actualizar corazones visuales
             const corazones = document.querySelectorAll('.ahorcado-vida-corazon');
             const indexCorazonPerdido = LUMIKIDS_JUEGOS.estado.vidas;
             if (corazones[indexCorazonPerdido]) {
@@ -488,11 +709,9 @@
             }
 
             if (LUMIKIDS_JUEGOS.estado.vidas <= 0) {
-                // Perdió el juego
                 document.querySelectorAll('.teclado-letra-btn').forEach(b => b.disabled = true);
                 actualizarDialogoLumi(`¡Oh, no! Te quedaste sin intentos. La palabra era "${palabra}". ¡Vamos a intentarlo de nuevo! 🧭`, 'triste');
 
-                // Mostrar botón de reintento en 1.5s
                 setTimeout(() => {
                     const retryBtn = document.createElement('button');
                     retryBtn.className = 'juegos-btn-principal';
@@ -516,7 +735,7 @@
             <div class="fase-pieza-obtenida">
                 <div class="pieza-contenedor-efecto">
                     <div class="pieza-destello-fondo"></div>
-                    <div class="pieza-rompecabezas-visual" id="puzzle-recompensa-visual"></div>
+                    <div class="pieza-rompecabezas-visual" id="puzzle-recompensa-visual" style="border:none; background:none; box-shadow:none; overflow:visible;"></div>
                 </div>
                 <h3 class="juegos-mensaje-titulo">¡Nueva pieza conseguida!</h3>
                 <p class="juegos-mensaje-subtitulo">Has ganado la pieza número ${LUMIKIDS_JUEGOS.estado.piezaIdx + 1} de la historia "${d.titulo}".</p>
@@ -527,8 +746,51 @@
             </div>
         `;
 
-        // Renderizar el recorte de la pieza en la previsualización
-        recortarPiezaVisual(document.getElementById('puzzle-recompensa-visual'), LUMIKIDS_JUEGOS.estado.piezaIdx, d);
+        // Renderizar el recorte de la pieza en la previsualización como SVG puzzle piece
+        const container = document.getElementById('puzzle-recompensa-visual');
+        if (container) {
+            const pieceSvg = crearElementoPiezaSVG(LUMIKIDS_JUEGOS.estado.piezaIdx, d, false);
+            
+            // Reajustar dimensiones para que quepa en un contenedor de 160x160
+            const P = LUMIKIDS_JUEGOS.estado.piezasTotal;
+            const grid = CONFIG_GRID_PUZZLE[P] || CONFIG_GRID_PUZZLE[4];
+            const cols = grid.cols;
+            const rows = grid.rows;
+            const pieceW = 300 / cols;
+            const pieceH = 400 / rows;
+            const overflow = 60;
+            const W = pieceW + overflow * 2;
+            const H = pieceH + overflow * 2;
+            
+            const targetSize = 130; // Tamaño objetivo de la pieza
+            const scale = targetSize / Math.max(W, H);
+            
+            pieceSvg.style.position = 'relative';
+            pieceSvg.style.width = `${W * scale}px`;
+            pieceSvg.style.height = `${H * scale}px`;
+            pieceSvg.style.margin = '0 auto';
+            pieceSvg.style.display = 'flex';
+            pieceSvg.style.justifyContent = 'center';
+            pieceSvg.style.alignItems = 'center';
+            pieceSvg.style.transform = 'none'; // reset absolute transform
+            pieceSvg.style.animation = 'bouncePiece 2s ease-in-out infinite alternate';
+            
+            const svgChild = pieceSvg.querySelector('svg');
+            if (svgChild) {
+                svgChild.setAttribute('width', W * scale);
+                svgChild.setAttribute('height', H * scale);
+                svgChild.style.overflow = 'visible';
+                
+                // Hacer que el contorno sea azul brillante (cyan) con brillo
+                const borderPath = svgChild.querySelectorAll('path')[1] || svgChild.querySelector('path[stroke="#6366f1"]');
+                if (borderPath) {
+                    borderPath.setAttribute('stroke', '#00d8ff'); // Cyan brillante
+                    borderPath.setAttribute('stroke-width', '3.5');
+                    borderPath.style.filter = 'drop-shadow(0 0 5px rgba(0,216,255,0.85))';
+                }
+            }
+            container.appendChild(pieceSvg);
+        }
 
         // Confeti en canvas para celebración
         crearConfetiVisual();
@@ -538,37 +800,78 @@
         });
     }
 
-    // Cortar el fondo de la imagen dinámicamente usando background-position y size
-    function recortarPiezaVisual(element, idx, d) {
-        if (!element) return;
-        const P = LUMIKIDS_JUEGOS.estado.piezasTotal;
-        const grid = CONFIG_GRID_PUZZLE[P] || CONFIG_GRID_PUZZLE[4];
-
-        const cols = grid.cols;
-        const rows = grid.rows;
-
-        // Tamaño total de la imagen en el rompecabezas (usaremos un tamaño base de 300x400 para proporciones)
-        const puzzleWidth = 300;
-        const puzzleHeight = 400;
-
-        const w = puzzleWidth / cols;
-        const h = puzzleHeight / rows;
-
-        const c = idx % cols;
-        const r = Math.floor(idx / cols);
-
-        const left = c * w;
-        const top = r * h;
-
-        element.style.backgroundImage = `url('${d.imagen}')`;
-        element.style.backgroundSize = `${puzzleWidth}px ${puzzleHeight}px`;
-        element.style.backgroundPosition = `-${left}px -${top}px`;
-        element.style.width = `${w}px`;
-        element.style.height = `${h}px`;
-    }
-
-    // ─── 7. FASE 4: El Rompecabezas (InteractJS) ──────────────────────────────────
+    // ─── 7. FASE 4: El Rompecabezas (React integration with fallback) ─────────────
     function renderFaseRompecabezas(d) {
+        if (window.initLumiKidsPuzzle) {
+            actualizarDialogoLumi("¡Resuelve el rompecabezas mágico para continuar la aventura! 🧩✨");
+
+            LUMIKIDS_JUEGOS.cuerpo.innerHTML = `
+                <div class="fase-rompecabezas" style="display: flex; justify-content: center; width: 100%;">
+                    <div id="react-puzzle-reader-root" style="width: 100%;"></div>
+                </div>
+            `;
+
+            const P = LUMIKIDS_JUEGOS.estado.piezasTotal;
+            let difficulty = "medio";
+            if (P <= 4) difficulty = "facil";
+            else if (P <= 9) difficulty = "medio";
+            else if (P <= 16) difficulty = "dificil";
+            else difficulty = "experto";
+
+            // Cargar estado de piezas ya colocadas
+            const keyPuzzle = `lumikids_puzzle_${LUMIKIDS_JUEGOS.estado.libroId}`;
+            const puzzleStatus = JSON.parse(localStorage.getItem(keyPuzzle)) || Array(P).fill(false);
+            const initialSnapped = {};
+            puzzleStatus.forEach((status, idx) => {
+                if (status) initialSnapped[idx] = true;
+            });
+
+            currentReactPuzzleRoot = window.initLumiKidsPuzzle("react-puzzle-reader-root", {
+                imageSrc: d.imagen,
+                difficulty: difficulty,
+                initialSnappedPieces: initialSnapped,
+                playablePieceId: LUMIKIDS_JUEGOS.estado.piezaIdx,
+                onClose: () => {
+                    cerrarOverlayJuegos();
+                },
+                onSuccess: () => {
+                    const keyPuzzle = `lumikids_puzzle_${LUMIKIDS_JUEGOS.estado.libroId}`;
+                    let puzzleStatus = JSON.parse(localStorage.getItem(keyPuzzle)) || Array(P).fill(false);
+                    puzzleStatus[LUMIKIDS_JUEGOS.estado.piezaIdx] = true;
+                    localStorage.setItem(keyPuzzle, JSON.stringify(puzzleStatus));
+
+                    localStorage.setItem(`lumikids_challenge_solved_${LUMIKIDS_JUEGOS.estado.libroId}_${LUMIKIDS_JUEGOS.estado.capNum}`, 'true');
+
+                    const ganadas = puzzleStatus.filter(Boolean).length;
+                    const cachedBook = localStorage.getItem(`lumikids_story_cache_v2_${LUMIKIDS_JUEGOS.estado.libroId}`);
+                    if (cachedBook) {
+                        try {
+                            const parsed = JSON.parse(cachedBook);
+                            parsed.piezasObtenidas = ganadas;
+                            localStorage.setItem(`lumikids_story_cache_v2_${LUMIKIDS_JUEGOS.estado.libroId}`, JSON.stringify(parsed));
+                        } catch (e) {}
+                    }
+
+                    if (currentReactPuzzleRoot) {
+                        currentReactPuzzleRoot.unmount();
+                        currentReactPuzzleRoot = null;
+                    }
+
+                    const todoCompletado = puzzleStatus.every(status => status === true);
+                    if (todoCompletado) {
+                        irAlPaso(5, d);
+                    } else {
+                        cerrarOverlayJuegos();
+                        if (LUMIKIDS_JUEGOS.callbackOnComplete) {
+                            LUMIKIDS_JUEGOS.callbackOnComplete();
+                        }
+                    }
+                }
+            });
+            return;
+        }
+
+        // FALLBACK: Si por alguna razón React no está cargado, usar la versión original
         actualizarDialogoLumi("¡Arrastra y encaja la pieza en su lugar correspondiente del tablero! 🧩");
 
         const P = LUMIKIDS_JUEGOS.estado.piezasTotal;
@@ -622,10 +925,11 @@
 
             // Si ya estaba completada en el pasado, pintar la pieza directamente adentro
             if (puzzleStatus[i]) {
-                const completedPiece = document.createElement('div');
-                completedPiece.className = 'puzzle-pieza-drag snapped';
-                recortarPiezaVisual(completedPiece, i, d);
+                const completedPiece = crearElementoPiezaSVG(i, d, true);
                 slot.appendChild(completedPiece);
+            } else {
+                // Agregar el hueco SVG con línea discontinua
+                slot.appendChild(crearSVGHuecoJuego(i));
             }
 
             board.appendChild(slot);
@@ -635,10 +939,8 @@
 
         // 2. Si la pieza ganada en este desafío NO ha sido colocada todavía en este tablero:
         if (!puzzleStatus[currentIdx]) {
-            const pieceDrag = document.createElement('div');
-            pieceDrag.className = 'puzzle-pieza-drag';
-            pieceDrag.dataset.pieceIdx = currentIdx;
-            recortarPiezaVisual(pieceDrag, currentIdx, d);
+            const pieceDrag = crearElementoPiezaSVG(currentIdx, d, false);
+            pieceDrag.style.position = 'relative';
             tray.appendChild(pieceDrag);
 
             // Inicializar InteractJS
@@ -689,23 +991,19 @@
 
         // Umbral de acople: 40 píxeles
         if (dist < 40) {
-            // Acoplada con éxito
             playSound('success');
             
             // Remover interact
             interact(pieceEl).unset();
 
-            // Colocar físicamente dentro del slot de destino
-            pieceEl.style.transform = 'none';
-            pieceEl.style.position = 'absolute';
-            pieceEl.style.left = '0';
-            pieceEl.style.top = '0';
-            pieceEl.classList.add('snapped');
-            pieceEl.removeAttribute('data-x');
-            pieceEl.removeAttribute('data-y');
+            // Re-generar la pieza como "enTablero" so it gets overflow=0, thinner borders, and no dropshadow!
+            const snappedPiece = crearElementoPiezaSVG(correctIdx, d, true);
+            snappedPiece.style.left = '0';
+            snappedPiece.style.top = '0';
+            snappedPiece.style.position = 'absolute';
             
             slotEl.innerHTML = '';
-            slotEl.appendChild(pieceEl);
+            slotEl.appendChild(snappedPiece);
             slotEl.classList.remove('vacia');
             slotEl.classList.add('snapped');
 
@@ -717,7 +1015,7 @@
             localStorage.setItem(keyPuzzle, JSON.stringify(puzzleStatus));
 
             // Animación flash y confeti local con GSAP
-            gsap.fromTo(pieceEl, { filter: 'brightness(2)' }, { filter: 'brightness(1)', duration: 0.5 });
+            gsap.fromTo(snappedPiece, { filter: 'brightness(2)' }, { filter: 'brightness(1)', duration: 0.5 });
             crearConfetiVisual();
 
             actualizarDialogoLumi("¡Excelente! La pieza ha encajado perfectamente en el rompecabezas. 🧩⭐");
@@ -867,6 +1165,14 @@
 
     // ─── 9. Cerrar Overlay de Juegos ──────────────────────────────────────────────
     function cerrarOverlayJuegos() {
+        if (currentReactPuzzleRoot) {
+            try {
+                currentReactPuzzleRoot.unmount();
+            } catch (e) {
+                console.warn("Error unmounting React root:", e);
+            }
+            currentReactPuzzleRoot = null;
+        }
         if (LUMIKIDS_JUEGOS.overlay) {
             LUMIKIDS_JUEGOS.overlay.classList.add('oculto');
             LUMIKIDS_JUEGOS.overlay.innerHTML = '';
